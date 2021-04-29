@@ -1,3 +1,5 @@
+import edu.princeton.cs.algs4.In;
+
 import java.util.Formatter;
 
 /**
@@ -79,19 +81,41 @@ public class IntList {
      * Returns a list consisting of the elements of A followed by the
      * *  elements of B.  May modify items of A. Don't use 'new'.
      */
-
+    private static IntList dcatenate(IntList Head, IntList P, IntList B) {
+        if (P.rest == null) {
+            P.rest = B;
+            return Head;
+        }
+        return dcatenate(Head, P.rest, B);
+    }
     public static IntList dcatenate(IntList A, IntList B) {
         //TODO:  fill in method
-        return null;
+        return dcatenate(A, A, B);
     }
 
     /**
      * Returns a list consisting of the elements of A followed by the
      * * elements of B.  May NOT modify items of A.  Use 'new'.
      */
+    private static IntList catenate(IntList Head, IntList P, IntList A, IntList B) {
+        if (A == null && B == null) {
+            return Head;
+        }
+        else if (A == null) {
+            return catenate(Head, P, B, null);
+        }
+        else if (Head == null) {
+            Head = new IntList(A.first, null);
+            P = Head;
+            return catenate(Head, P, A.rest, B);
+        }
+        P.rest = new IntList(A.first, null);
+        P = P.rest;
+        return catenate(Head, P, A.rest, B);
+    }
     public static IntList catenate(IntList A, IntList B) {
         //TODO:  fill in method
-        return null;
+        return catenate(null, null, A, B);
     }
 
 
