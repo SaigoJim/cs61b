@@ -53,13 +53,31 @@ public class ArrayDequeTest {
         for (int i = 80; i > 0; i -= 1) {
             S.removeLast();
         }
+
+        for (int i = 0; i < 80; i += 1) {
+            S.addLast(i);
+        }
     }
 
+    public static void testResize2() {
+        ArrayDeque<Integer> L = new ArrayDeque<>();
+        for (int i = 0; i < 32; i += 1) {
+            L.addLast(i);
+        }
+
+        for (int i = 0; i < 6; i += 1) {
+            L.removeFirst();
+        }
+
+        for (int i = 32; i >= 6; i -= 1) {
+            L.removeLast();
+        }
+    }
     public static void main(String[] args) {
         //testAddFirst();
         //testAddLast();
         //testMix();
-        testResize();
+        testResize2();
         //int i = -1 % 8;
     }
 }
