@@ -38,11 +38,11 @@ public class ArrayDequeTest {
     }
 
     public static void testResize() {
-        ArrayDeque<Integer> L = new ArrayDeque<>();
+        /*ArrayDeque<Integer> L = new ArrayDeque<>();
         for (int i = 0; i < 15; i += 1) {
             L.addLast(i);
         }
-        L = null;
+        L = null;*/
 
         ArrayDeque<Integer> S = new ArrayDeque<>();
         for (int i = 0; i < 32; i += 1) {
@@ -53,6 +53,11 @@ public class ArrayDequeTest {
             } else if (i >= 18) {
                 S.addLast(i);
             }
+        }
+
+        S.printDeque();
+        for (int i = 32; i > 0; i -= 1) {
+            S.removeLast();
         }
     }
 
