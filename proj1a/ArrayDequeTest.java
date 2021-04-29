@@ -45,18 +45,12 @@ public class ArrayDequeTest {
         L = null;*/
 
         ArrayDeque<Integer> S = new ArrayDeque<>();
-        for (int i = 0; i < 32; i += 1) {
-            if (i < 5) {
-                S.addLast(i);
-            } else if (i >= 5 && i < 18) {
-                S.addFirst(i);
-            } else if (i >= 18) {
-                S.addLast(i);
-            }
+        for (int i = 0; i < 80; i += 1) {
+            S.addLast(i);
         }
 
         S.printDeque();
-        for (int i = 32; i > 0; i -= 1) {
+        for (int i = 80; i > 0; i -= 1) {
             S.removeLast();
         }
     }
