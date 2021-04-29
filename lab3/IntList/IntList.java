@@ -1,5 +1,3 @@
-import edu.princeton.cs.algs4.In;
-
 import java.util.Formatter;
 
 /**
@@ -13,11 +11,11 @@ public class IntList {
     /**
      * First element of list.
      */
-    public int first;
+    private int first;
     /**
      * Remaining elements of list.
      */
-    public IntList rest;
+    private IntList rest;
 
     /**
      * A List with first FIRST0 and rest REST0.
@@ -81,19 +79,17 @@ public class IntList {
      * Returns a list consisting of the elements of A followed by the
      * *  elements of B.  May modify items of A. Don't use 'new'.
      */
-    private static IntList dcatenate(IntList Head, IntList P, IntList B) {
-        if (Head == null) {
+    private static IntList dcatenate(IntList headNode, IntList P, IntList B) {
+        if (headNode == null) {
             return B;
-        }
-        else if (P.rest == null) {
+        } else if (P.rest == null) {
             P.rest = B;
-            return Head;
+            return headNode;
         }
-        return dcatenate(Head, P.rest, B);
+        return dcatenate(headNode, P.rest, B);
     }
 
     public static IntList dcatenate(IntList A, IntList B) {
-        //TODO:  fill in method
         return dcatenate(A, A, B);
     }
 
@@ -101,26 +97,40 @@ public class IntList {
      * Returns a list consisting of the elements of A followed by the
      * * elements of B.  May NOT modify items of A.  Use 'new'.
      */
-    private static IntList catenate(IntList Head, IntList P, IntList A, IntList B) {
+    private static IntList catenate(IntList headNode, IntList P, IntList A, IntList B) {
         if (A == null && B == null) {
-            return Head;
-        }
-        else if (A == null) {
-            return catenate(Head, P, B, null);
-        }
-        else if (Head == null) {
-            Head = new IntList(A.first, null);
-            P = Head;
-            return catenate(Head, P, A.rest, B);
+            return headNode;
+        } else if (A == null) {
+            return catenate(headNode, P, B, null);
+        } else if (headNode == null) {
+            headNode = new IntList(A.first, null);
+            P = headNode;
+            return catenate(headNode, P, A.rest, B);
         }
         P.rest = new IntList(A.first, null);
         P = P.rest;
-        return catenate(Head, P, A.rest, B);
+        return catenate(headNode, P, A.rest, B);
     }
 
     public static IntList catenate(IntList A, IntList B) {
-        //TODO:  fill in method
         return catenate(null, null, A, B);
+    }
+
+    /**
+     * Returns the reverse of the given IntList.
+     * This method is destructive. If given null
+     * as an input, returns null.
+     */
+
+    public static IntList reverse(IntList A) {
+        if (A == null || A.rest == null) {
+            return A;
+        } else {
+            IntList reversed = reverse(A.rest);
+            A.rest.rest = A;
+            A.rest = null;
+            return reversed;
+        }
     }
 
 
