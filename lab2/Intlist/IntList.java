@@ -82,7 +82,10 @@ public class IntList {
      * *  elements of B.  May modify items of A. Don't use 'new'.
      */
     private static IntList dcatenate(IntList Head, IntList P, IntList B) {
-        if (P.rest == null) {
+        if (Head == null) {
+            return B;
+        }
+        else if (P.rest == null) {
             P.rest = B;
             return Head;
         }
