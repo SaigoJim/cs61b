@@ -9,12 +9,12 @@ public class ArrayDeque<T> {
         size = front = end = 0;
     }
 
-    public ArrayDeque(T item) {
+    /*public ArrayDeque(T item) {
         items = (T[]) new Object[8];
         front = end = 0;
         items[front] = item;
         size = 1;
-    }
+    }*/
 
     private void resize(int capacity) {
         T[] a = (T[]) new Object[capacity];
@@ -22,7 +22,7 @@ public class ArrayDeque<T> {
             System.arraycopy(items, 0, a, 0, size);
         } else {
             System.arraycopy(items, front, a, 0, items.length - front);
-            System.arraycopy(items, 0,a, items.length - front, end + 1);
+            System.arraycopy(items, 0, a, items.length - front, end + 1);
         }
         items = a;
         front = 0;
@@ -58,7 +58,7 @@ public class ArrayDeque<T> {
         return first;
     }
 
-    public T getFirst() {
+    private T getFirst() {
         return items[front];
     }
 
@@ -91,7 +91,7 @@ public class ArrayDeque<T> {
         return last;
     }
 
-    public T getLast() {
+    private T getLast() {
         return items[end];
     }
 

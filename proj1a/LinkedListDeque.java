@@ -4,7 +4,7 @@ public class LinkedListDeque<T> {
         StuffNode prev;
         StuffNode next;
 
-        public StuffNode(T i, StuffNode p, StuffNode n) {
+        StuffNode(T i, StuffNode p, StuffNode n) {
             item = i;
             prev = p;
             next = n;
@@ -20,10 +20,10 @@ public class LinkedListDeque<T> {
         sentinel.next = sentinel;
     }
 
-    public LinkedListDeque(T i) {
+    /*public LinkedListDeque(T i) {
         setSentinel(i);
         size = 1;
-    }
+    }*/
 
     public LinkedListDeque() {
         size = 0;

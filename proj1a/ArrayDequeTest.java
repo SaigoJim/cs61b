@@ -4,12 +4,12 @@ public class ArrayDequeTest {
         L.addFirst(1);
         L.addFirst(2);
         L.addFirst(3);
-        System.out.println(L.getFirst());
+        //System.out.println(L.getFirst());
         L.removeFirst();
-        System.out.println(L.getFirst());
+        //System.out.println(L.getFirst());
         L.removeFirst();
         L.removeFirst();
-        System.out.println(L.getFirst());
+        //System.out.println(L.getFirst());
     }
 
     public static void testAddLast() {
@@ -17,12 +17,12 @@ public class ArrayDequeTest {
         L.addLast(1);
         L.addLast(2);
         L.addLast(3);
-        System.out.println(L.getLast());
+        //System.out.println(L.getLast());
         L.removeLast();
-        System.out.println(L.getLast());
+        //System.out.println(L.getLast());
         L.removeLast();
         L.removeLast();
-        System.out.println(L.getLast());
+        //System.out.println(L.getLast());
     }
 
     public static void testMix() {
@@ -30,11 +30,11 @@ public class ArrayDequeTest {
         L.addLast(1);
         L.addFirst(2);
         L.addLast(3);
-        System.out.println(L.getFirst());
+        //System.out.println(L.getFirst());
         L.removeLast();
-        System.out.println(L.getLast());
+        //System.out.println(L.getLast());
         L.addFirst(99);
-        System.out.println(L.getFirst());
+        //System.out.println(L.getFirst());
     }
 
     public static void testResize() {
