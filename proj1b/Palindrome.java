@@ -18,7 +18,7 @@ public class Palindrome {
         }
         char first = L.removeFirst();
         char last = L.removeLast();
-        if (Character.toLowerCase(first) == Character.toLowerCase(last)) {
+        if (first == last) {
             return isPalindrome(L);
         }
         return false;
