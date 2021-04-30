@@ -20,4 +20,11 @@ public class TestOffByOne {
         assertFalse(offByOne.equalChars('%', '^'));
         assertFalse(offByOne.equalChars('x', 'z'));
     }
+
+    @Test
+    public void testEqualChars3() {
+        assertTrue(offByOne.equalChars('A', 'b'));
+        assertTrue(offByOne.equalChars('d', 'C'));
+        assertTrue(offByOne.equalChars('Z', 'y'));
+    }
 }
