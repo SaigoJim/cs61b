@@ -4,6 +4,7 @@ public class ArrayDeque<T> {
     private int size;
     private int front;
     private int end;
+
     public ArrayDeque() {
         items = (T[]) new Object[8];
         size = front = end = 0;
@@ -111,9 +112,6 @@ public class ArrayDeque<T> {
     }
 
     public void printDeque() {
-        if (size == 0) {
-            System.out.println(items[front]);
-        }
         for (int i = 0; i < size; i += 1) {
             System.out.print(get(i) + " ");
         }
