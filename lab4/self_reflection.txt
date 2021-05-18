@@ -4,15 +4,15 @@ ArrayDeque:
 
 Q: Give an example of at least one idea from the staff solution that would have made your solution better (if any).
 
-A: 
+A: Set the Constant.
 
 Q: What's something you felt proud of in your code, if anything?
 
-A:
+A: Can solve lots of problems.
 
 Q: What's something that was particularly inelegant in your code, if anything?
 
-A:
+A: many special cases.  
 
 Q: What did you learn by talking to your partner about writing ArrayDeque?
 

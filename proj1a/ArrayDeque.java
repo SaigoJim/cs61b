@@ -7,7 +7,8 @@ public class ArrayDeque<T> {
 
     public ArrayDeque() {
         items = (T[]) new Object[8];
-        size = front = end = 0;
+        size = 0;
+        front = end = -1;
     }
 
     /*public ArrayDeque(T item) {
@@ -29,16 +30,20 @@ public class ArrayDeque<T> {
         front = 0;
         end = size - 1;
     }
-
+    private int minusOne(int pos) {
+        return (items.length + pos - 1) % items.length;
+    }
+    private int plusOne(int pos) {
+        return (pos + 1) % items.length;
+    }
     public void addFirst(T item) {
         if (size == 0) {
-            items[front] = item;
-            size += 1;
+            initialize(item);
             return;
         } else if (size == items.length) {
             resize(size * 2);
         }
-        front = (items.length + front - 1) % items.length;
+        front = minusOne(front);
         items[front] = item;
         size += 1;
     }
@@ -54,7 +59,7 @@ public class ArrayDeque<T> {
         items[front] = null;
         size -= 1;
         if (size != 0) {
-            front = (front + 1) % items.length;
+            front = plusOne(front);
         }
         return first;
     }
@@ -63,15 +68,18 @@ public class ArrayDeque<T> {
         return items[front];
     }
 
+    private void initialize(T item) {
+        items[front] = item;
+        size += 1;
+    }
     public void addLast(T item) {
         if (size == 0) {
-            items[end] = item;
-            size += 1;
+            initialize(item);
             return;
         } else if (size == items.length) {
             resize(size * 2);
         }
-        end = (end + 1) % items.length;
+        end = plusOne(end);
         items[end] = item;
         size += 1;
     }
@@ -87,7 +95,7 @@ public class ArrayDeque<T> {
         items[end] = null;
         size -= 1;
         if (size != 0) {
-            end = (items.length + end - 1) % items.length;
+            end = minusOne(end);
         }
         return last;
     }
