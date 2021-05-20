@@ -1,8 +1,5 @@
 import synthesizer.GuitarString;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class GuitarHero {
     public static void main(String[] args) {
         String keyboard = "q2we4r5ty7u8i9op-[=zxdcfvgbnjmk,.;/' ";
