@@ -27,6 +27,10 @@ public class TestArrayRingBuffer {
         for (int i = 0; i < 10; i += 1, num = num + 0.1) {
             arb.enqueue(num);
         }
+
+        for (double item : arb) {
+            System.out.print(item + " ");
+        }
     }
 
     /** Calls tests for ArrayRingBuffer. */
