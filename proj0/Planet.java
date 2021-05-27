@@ -78,4 +78,19 @@ public class Planet {
         }
         return netForceByY;
     }
+
+    public void update(double dt, double fx, double fy) {
+        double aX = (fx / mass);
+        double aY = (fy / mass);
+
+        xxVel += aX*dt;
+        yyVel += aY*dt;
+
+        xxPos += xxVel*dt;
+        yyPos += yyVel*dt;
+    }
+
+    public void draw() {
+        StdDraw.picture(xxPos, yyPos, "images/" + imgFileName);
+    }
 }
