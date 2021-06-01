@@ -15,8 +15,9 @@ public class HexWorld {
     private static final int WIDTH = 80;
     private static final int HEIGHT = 80;
 
-    private static final long SEED = 276673;
+    private static final long SEED = 273;
     private static final Random RANDOM = new Random(SEED);
+
     private static class Position {
         int x;
         int y;
@@ -26,10 +27,8 @@ public class HexWorld {
             this.y = y;
         }
     }
-    /** Picks a RANDOM tile with a 33% change of being
-     *  a wall, 33% chance of being a flower, and 33%
-     *  chance of being empty space.
-     */
+
+    /** Picks a RANDOM tile. */
     private static TETile randomTile() {
         int tileNum = RANDOM.nextInt(3);
         switch (tileNum) {
@@ -51,38 +50,40 @@ public class HexWorld {
 
     /** Add a hexagon of side length Length to a given position (X, Y) in the Tiles. */
     public static void addHexagon(TETile[][] tiles, Position p, int length, TETile tile) {
-        addLowerHalf(tiles, p, length, tile);
-        addUpperHalf(tiles, new Position(p.x, p.y + 2*length - 1), length, tile);
-    }
-
-    private static void addLowerHalf(TETile[][] tiles, Position p, int length, TETile tile){
-        for (int y = p.y, i = 0; y < p.y + length; y += 1, i += 1) {
-            int begin = p.x - i;
-            int end = p.x + length + i;
-            addRow(tiles, y, begin, end, tile);
+        for (int rowNum = 0; rowNum < 2*length; rowNum += 1) {
+            int startX = p.x + xPointOffSet(length, rowNum);
+            int startY = p.y + rowNum;
+            int rowLength = length + rowLengthOffSet(length, rowNum);
+            addRow(tiles, new Position(startX, startY), rowLength, tile);
         }
     }
 
-    private static void addUpperHalf(TETile[][] tiles, Position p, int length, TETile tile) {
-        for (int y = p.y, i = 0; y > p.y - length; y -= 1, i += 1) {
-            int begin = p.x - i;
-            int end = p.x + length + i;
-            addRow(tiles, y, begin, end, tile);
+    private static int rowLengthOffSet(int length, int rowNum) {
+        if (rowNum < length) {
+            return rowNum * 2;
         }
+        return (2*length -1 - rowNum) * 2;
     }
 
-    /** Add a row of tile between begin pos and end pos with specific column in the Tiles. */
-    private static void addRow(TETile[][] tiles, int column,  int begin, int end, TETile tile) {
-        for (int x = begin; x < end; x += 1) {
-            tiles[x][column] = tile;
+    private static int xPointOffSet(int length, int rowNum) {
+        if (rowNum < length) {
+            return -rowNum;
+        }
+        return -(2*length -1 - rowNum);
+    }
+
+    /** Add a row of tile from Position p with length of rowLength in the Tiles. */
+    private static void addRow(TETile[][] tiles, Position p, int rowLength, TETile tile) {
+        for (int i = 0; i < rowLength; i += 1) {
+            tiles[p.x + i][p.y] = tile;
         }
     }
 
     public static void drawTessellatedHexagons(TETile[][] tiles, Position p, int length) {
         int columnNum = 5;
         int rowNum = 3;
-        // From left to right
-        // From down to up
+        // From left to right and From down to up
+        // Draw adjacent hexagons column by column
         for (int i = 0; i < columnNum; i += 1) {
             int startX = p.x + rowOffSetOfTHs(length, i);
             int startY = p.y + colOffSetOfTHx(length, i);
@@ -128,9 +129,8 @@ public class HexWorld {
         TETile[][] hexWorld = new TETile[WIDTH][HEIGHT];
         initializeTiles(hexWorld);
 
-        drawTessellatedHexagons(hexWorld, new Position(30, 40), 3);
-        // Add a single hexagon
-        //addHexagon(hexWorld, new Position(40, 40), 4, Tileset.FLOWER);
+        // Tessellate 19 hexagons together in the hexWorld
+        drawTessellatedHexagons(hexWorld, new Position(30, 40), 5);
 
         ter.renderFrame(hexWorld);
     }
