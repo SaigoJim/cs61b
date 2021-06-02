@@ -5,6 +5,7 @@ import byog.TileEngine.TETile;
 
 public class Game {
     TERenderer ter = new TERenderer();
+
     /* Feel free to change the width and height. */
     public static final int WIDTH = 80;
     public static final int HEIGHT = 30;
@@ -32,7 +33,13 @@ public class Game {
         // and return a 2D tile representation of the world that would have been
         // drawn if the same inputs had been given to playWithKeyboard().
 
-        TETile[][] finalWorldFrame = null;
+        // Command Parsing
+
+
+        // World Generating
+        WorldGenerator worldGen = new WorldGenerator(WIDTH, HEIGHT, 12345);
+        // Returning the World
+        TETile[][] finalWorldFrame = worldGen.randomWorld();
         return finalWorldFrame;
     }
 }
