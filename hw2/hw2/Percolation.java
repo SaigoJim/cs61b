@@ -2,29 +2,56 @@ package hw2;
 
 import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
+import java.util.ArrayList;
+
 public class Percolation {
     private Site[][] grid;
     private int length;
     private int openSize;
     WeightedQuickUnionUF wqu;
     boolean percolated;
+    ArrayList<Integer> openedTopSites;
     private class Site {
         final boolean OPEN = true;
-        final boolean BLOKED = false;
+        final boolean BLOCKED = false;
         boolean fulled;
         boolean state;
-
-        Site(boolean state) {
-            this.state = state;
+        int lengthOfGrid;
+        int row;
+        int col;
+        int pos;
+        boolean isTop = false;
+        boolean isBottem = false;
+        Site(int length, int row, int col) {
+            lengthOfGrid = length;
+            this.row = row;
+            this.col = col;
             fulled = false;
+            setBLOCKED();
+            pos = TwoDToOneD(row, col);
+            if (row == 0) {
+                isTop = true;
+            } else if (row == length - 1) {
+                isBottem = true;
+            }
         }
 
+        private int TwoDToOneD(int row, int col) {
+            return length*row + col;
+        }
+        public void setBLOCKED() {
+            state = BLOCKED;
+        }
         public void setOPEN() {
             state = OPEN;
         }
-
         public void setFulled() {
             fulled = true;
+        }
+        public void setFulled(WeightedQuickUnionUF wqu, int top) {
+            if (wqu.connected(pos, top)) {
+                fulled = true;
+            }
         }
         public boolean peekState() {
             return state;
@@ -43,12 +70,13 @@ public class Percolation {
         length = N;
         for (int i = 0; i < N; i += 1) {
             for (int j = 0; j < N; j += 1) {
-                grid[i][j] = new Site(false);
+                grid[i][j] = new Site(length, i, j);
             }
         }
         wqu = new WeightedQuickUnionUF(N*N);
         openSize = 0;
         percolated = false;
+        openedTopSites = new ArrayList<>();
     }
 
     // open the site (row, col) if it is not open already
@@ -61,47 +89,81 @@ public class Percolation {
         }
         grid[row][col].setOPEN();
         openSize += 1;
-        unionNeighbors(row, col);
-        updateConfig(row, col);
+        unionNeighbors(grid[row][col]);
+        updateStates(grid[row][col]);
     }
-
-    private void updateConfig(int row, int col) {
-
-    }
-    private void unionNeighbors(int row, int col) {
-        int posInWQU = TwoDToOneD(row, col);
-        int posOfOpenedNeighbor = findOpenedNeighbors(row, col);
-        if (posOfOpenedNeighbor < length*length) {
-            wqu.union(posOfOpenedNeighbor, posInWQU);
+    private void updateStates(Site s) {
+        if (s.isTop) {
+            if (!alreadyConnectedToTop(s.pos)) {
+                openedTopSites.add(s.pos);
+            }
+        } else if (s.isBottem) {
+            if (alreadyConnectedToTop(s.pos)) {
+                s.setFulled();
+                percolated = true;
+            }
+        } else {
+            if (alreadyConnectedToTop(s.pos)) {
+                s.setFulled();
+            }
         }
     }
 
-    private int findOpenedNeighbors(int row, int col) {
+    private boolean alreadyConnectedToTop(int pos) {
+        boolean alreadyConnected = false;
+        for (int topPos : openedTopSites) {
+            if (wqu.connected(topPos, pos)) {
+                alreadyConnected = true;
+            }
+        }
+        return alreadyConnected;
+    }
+    private void unionNeighbors(Site s) {
+        Site neighbor;
+        // UP
+        if (s.row - 1 > 0) {
+            neighbor = grid[s.row - 1][s.col];
+            wqu.union(neighbor.pos, s.pos);
+        }
+        // DOWN
+        if (s.row + 1 < length) {
+            neighbor = grid[s.row + 1][s.col];
+            wqu.union(neighbor.pos, s.pos);
+        }
+        // LEFT
+        if (s.col - 1 > 0) {
+            neighbor = grid[s.row][s.col - 1];
+            wqu.union(neighbor.pos, s.pos);
+        }
+        // RIGHT
+        if (s.col + 1 < length) {
+            neighbor = grid[s.row][s.col + 1];
+            wqu.union(neighbor.pos, s.pos);
+        }
+    }
+
+    private Site findOpenedNeighbors(int row, int col) {
         try {
             // UP
-            if (isOpen(row - 1, col)) {return TwoDToOneD(row - 1, col);}
+            if (isOpen(row - 1, col)) {return grid[row - 1][col];}
         } catch (Exception e) {
         }
         try {
             // DOWN
-            if (isOpen(row + 1, col)) {return TwoDToOneD(row + 1, col);}
+            if (isOpen(row + 1, col)) {return grid[row + 1][col];}
         } catch (Exception e) {
         }
         try {
             // LEFT
-            if (isOpen(row, col - 1)) {return TwoDToOneD(row, col - 1);}
+            if (isOpen(row, col - 1)) {return grid[row][col - 1];}
         } catch (Exception e) {
         }
         try {
             // RIGHT
-            if (isOpen(row, col + 1)) {return TwoDToOneD(row, col + 1);}
+            if (isOpen(row, col + 1)) {return grid[row][col + 1];}
         } catch (Exception e) {
         }
-        return length*length;
-    }
-
-    private int TwoDToOneD(int row, int col) {
-        return length*row + col;
+        return null;
     }
 
     // is the site (row, col) open?
@@ -111,11 +173,7 @@ public class Percolation {
         }
         return grid[row][col].peekState();
     }
-    public boolean isTwoConnected(int r1, int c1, int r2, int c2) {
-        int pos1 = TwoDToOneD(r1, c1);
-        int pos2 = TwoDToOneD(r2, c2);
-        return wqu.connected(pos1, pos2);
-    }
+
     // is the site (row, col) full?
     public boolean isFull(int row, int col) {
         if (row < 0 || row >= length || col < 0 || col >= length) {
@@ -141,11 +199,16 @@ public class Percolation {
 
     // use for unit testing (not required)
     public static void main(String[] args) {
-        Percolation p = new Percolation(4);
+        Percolation p = new Percolation(5);
         p.open(0, 0);
-        p.open(0, 1);
+        p.open(0, 2);
+        p.open(0, 3);
+        p.open(1, 2);
+        p.open(2, 1);
+        p.open(2, 2);
+        p.open(3, 1);
 
         int size = p.numberOfOpenSites();
-        boolean b = p.isTwoConnected(0, 0, 0, 1);
+        boolean a = p.percolates();
     }
 }
