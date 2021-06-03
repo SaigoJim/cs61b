@@ -10,7 +10,7 @@ public class PercolationStats {
     private double stddev;
     private double confiLow;
     private double confiHigh;
-    PercolationFactory maker;
+    private PercolationFactory maker;
     /** perform T independent experiments on an N-by-N grid */
     public PercolationStats(int N, int T, PercolationFactory pf) {
         if (N <= 0 || T <= 0) {

@@ -25,6 +25,7 @@ public class Percolation {
             state = OPENED;
         }
     }
+
     /** create N-by-N grid, with all sites initially blocked */
     public Percolation(int N) {
         if (N <= 0) {
@@ -61,13 +62,8 @@ public class Percolation {
         unionNeighbors(row, col);
     }
     private void unionNeighbors(int row, int col) {
-        if (row == 0) {
-            percolationWQU.union(grid[row][col].pos, topSites);
-            fullWQU.union(grid[row][col].pos, topSites);
-        } else if (row == LENGTH - 1) {
-            percolationWQU.union(grid[row][col].pos, bottomSites);
-        }
-
+        // Top and Bottom
+        topRowAndBottomRowProcess(row, col);
         // Neighbors
         // UP
         if (row - 1 > -1) {
@@ -97,6 +93,21 @@ public class Percolation {
                 fullWQU.union(grid[row][col].pos, grid[row][col + 1].pos);
             }
         }
+    }
+
+    private void topRowAndBottomRowProcess(int row, int col) {
+        if (row == 0 && row == LENGTH - 1) {
+            percolationWQU.union(grid[row][col].pos, topSites);
+            fullWQU.union(grid[row][col].pos, topSites);
+            percolationWQU.union(grid[row][col].pos, bottomSites);
+        }
+        if (row == 0) {
+            percolationWQU.union(grid[row][col].pos, topSites);
+            fullWQU.union(grid[row][col].pos, topSites);
+        } else if (row == LENGTH - 1) {
+            percolationWQU.union(grid[row][col].pos, bottomSites);
+        }
+
     }
     /** is the site (row, col) open? */
     public boolean isOpen(int row, int col) {
