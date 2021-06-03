@@ -5,13 +5,13 @@ import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 public class Percolation {
     private int LENGTH;
     private int openSize;
-    boolean OPENED = true;
-    boolean BLOCKED = false;
-    Site[][] grid;
-    int topSites = LENGTH * LENGTH;
-    int bottomSites = LENGTH * LENGTH + 1;
-    WeightedQuickUnionUF percolationWQU;
-    WeightedQuickUnionUF fullWQU;
+    private boolean OPENED = true;
+    private boolean BLOCKED = false;
+    private Site[][] grid;
+    private int topSites;
+    private int bottomSites;
+    private WeightedQuickUnionUF percolationWQU;
+    private WeightedQuickUnionUF fullWQU;
 
     private class Site {
         boolean state;
@@ -41,6 +41,8 @@ public class Percolation {
         }
         percolationWQU = new WeightedQuickUnionUF(LENGTH * LENGTH + 2);
         fullWQU = new WeightedQuickUnionUF(LENGTH * LENGTH + 1);
+        topSites = LENGTH * LENGTH;
+        bottomSites = LENGTH * LENGTH + 1;
     }
     private int twoToOne(int row, int col) {
         return row * LENGTH + col;

@@ -21,7 +21,11 @@ public class TestPercolation {
         boolean isFulled = p.isFull(1, 2);
         assertTrue(isFulled);
     }
-
+    @Test
+    public void testPercolation00() {
+        Percolation p = new Percolation(5);
+        assertFalse(p.isFull(0, 0));
+    }
     @Test
     public void testPercolationBackWash() {
         Percolation p = new Percolation(5);
