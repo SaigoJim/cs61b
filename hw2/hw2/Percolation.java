@@ -26,7 +26,7 @@ public class Percolation {
         }
     }
     /** create N-by-N grid, with all sites initially blocked */
-    public Percolation(int N){
+    public Percolation(int N) {
         if (N <= 0) {
             throw new java.lang.IllegalArgumentException();
         }
@@ -35,14 +35,14 @@ public class Percolation {
         grid = new Site[LENGTH][LENGTH];
         for (int i = 0; i < N; i += 1) {
             for (int j = 0; j < N; j += 1) {
-                int pos = TwoToOne(i, j);
+                int pos = twoToOne(i, j);
                 grid[i][j] = new Site(pos);
             }
         }
-        percolationWQU = new WeightedQuickUnionUF(LENGTH*LENGTH + 2);
-        fullWQU = new WeightedQuickUnionUF(LENGTH*LENGTH + 1);
+        percolationWQU = new WeightedQuickUnionUF(LENGTH * LENGTH + 2);
+        fullWQU = new WeightedQuickUnionUF(LENGTH * LENGTH + 1);
     }
-    private int TwoToOne(int row, int col) {
+    private int twoToOne(int row, int col) {
         return row * LENGTH + col;
     }
 
@@ -55,6 +55,7 @@ public class Percolation {
             return;
         }
         grid[row][col].setOPENED();
+        openSize += 1;
         unionNeighbors(row, col);
     }
     private void unionNeighbors(int row, int col) {
@@ -67,31 +68,31 @@ public class Percolation {
 
         // Neighbors
         // UP
-        if (row - 1 > - 1) {
+        if (row - 1 > -1) {
             if (isOpen(row - 1, col)) {
-                percolationWQU.union(grid[row][col].pos, grid[row-1][col].pos);
-                fullWQU.union(grid[row][col].pos, grid[row-1][col].pos);
+                percolationWQU.union(grid[row][col].pos, grid[row - 1][col].pos);
+                fullWQU.union(grid[row][col].pos, grid[row - 1][col].pos);
             }
         }
         // DOWN
         if (row + 1 < LENGTH) {
             if (isOpen(row + 1, col)) {
-                percolationWQU.union(grid[row][col].pos, grid[row+1][col].pos);
-                fullWQU.union(grid[row][col].pos, grid[row+1][col].pos);
+                percolationWQU.union(grid[row][col].pos, grid[row + 1][col].pos);
+                fullWQU.union(grid[row][col].pos, grid[row + 1][col].pos);
             }
         }
         // LEFT
-        if (col - 1 > - 1) {
-            if (isOpen( row, col - 1)) {
-                percolationWQU.union(grid[row][col].pos, grid[row][col-1].pos);
-                fullWQU.union(grid[row][col].pos, grid[row][col-1].pos);
+        if (col - 1 > -1) {
+            if (isOpen(row, col - 1)) {
+                percolationWQU.union(grid[row][col].pos, grid[row][col - 1].pos);
+                fullWQU.union(grid[row][col].pos, grid[row][col - 1].pos);
             }
         }
         // DOWN
         if (col + 1 < LENGTH) {
             if (isOpen(row, col + 1)) {
-                percolationWQU.union(grid[row][col].pos, grid[row][col+1].pos);
-                fullWQU.union(grid[row][col].pos, grid[row][col+1].pos);
+                percolationWQU.union(grid[row][col].pos, grid[row][col + 1].pos);
+                fullWQU.union(grid[row][col].pos, grid[row][col + 1].pos);
             }
         }
     }

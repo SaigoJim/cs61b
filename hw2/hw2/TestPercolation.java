@@ -48,4 +48,13 @@ public class TestPercolation {
         assertTrue(isFulled2);
 
     }
+
+    @Test
+    public void testPercolationStats() {
+        PercolationStats ps = new PercolationStats(20, 10, new PercolationFactory());
+        double mn = ps.mean();
+        double sd = ps.stddev();
+        double cl = ps.confidenceLow();
+        double ch = ps.confidenceHigh();
+    }
 }
