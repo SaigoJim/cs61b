@@ -39,8 +39,8 @@ public class SimpleOomage implements Oomage {
             return red + green + blue;
         } else {
             int hashCode = (red / 5);
-            hashCode = hashCode * 51 + (green / 5);
-            hashCode = hashCode * 51 + (blue / 5);
+            hashCode = hashCode * 53 + (green / 5);
+            hashCode = hashCode * 53 + (blue / 5);
             return hashCode;
         }
     }
