@@ -25,7 +25,7 @@ public class SimpleOomage implements Oomage {
         }
         SimpleOomage other = (SimpleOomage) o;
         if (red == other.red && green == other.green && blue == other.blue) {
-                return true;
+            return true;
         }
         return false;
     }
@@ -39,8 +39,8 @@ public class SimpleOomage implements Oomage {
             return red + green + blue;
         } else {
             int hashCode = (red / 5);
-            hashCode = hashCode*51 + (green / 5);
-            hashCode = hashCode*51 + (blue / 5);
+            hashCode = hashCode * 51 + (green / 5);
+            hashCode = hashCode * 51 + (blue / 5);
             return hashCode;
         }
     }
