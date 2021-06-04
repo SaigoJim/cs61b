@@ -137,33 +137,31 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
         }
         return removed;
     }
-
     private Node removeNode(K key, Node T) {
-        if (key.equals(T.key)) {
-            size -= 1;
-            T = removeThisNode(T);
-        } else if (key.compareTo(T.key) > 0) {
+        if (T == null) {
+            return null;
+        }
+        if (key.compareTo(T.key) > 0) {
             T.right = removeNode(key, T.right);
         } else if (key.compareTo(T.key) < 0) {
             T.left = removeNode(key, T.left);
+        } else if (key.equals(T.key)) {
+            size -= 1;
+            if (T.left == null) {
+                T = T.right;
+            } else if (T.right == null) {
+                T = T.left;
+            } else {
+                T.left = subLeftLargest(T.left, T);
+            }
         }
         return T;
-    }
-    private Node removeThisNode(Node node) {
-        if (node.left == null) {
-            return node.right;
-        }
-        if (node.right == null) {
-            return root.left;
-        }
-        node.left = subLeftLargest(node.left, node);
-        return node;
     }
     private Node subLeftLargest(Node l, Node node) {
         if (l.right == null) {
             node.key = l.key;
             node.value = l.value;
-            return null;
+            return l.left;
         }
         l.right = subLeftLargest(l.right, node);
         return l;
