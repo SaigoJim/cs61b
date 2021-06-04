@@ -6,16 +6,16 @@ import java.util.Set;
 /**
  * Implementation of interface Map61B with BST as core data structure.
  *
- * @author Your name here
+ * @Saigo Jim Your name here
  */
 public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
 
     private class Node {
-        /* (K, V) pair stored in this Node. */
+        /** (K, V) pair stored in this Node. */
         private K key;
         private V value;
 
-        /* Children of this Node. */
+        /** Children of this Node. */
         private Node left;
         private Node right;
 
@@ -28,12 +28,12 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
     private Node root;  /* Root node of the tree. */
     private int size; /* The number of key-value pairs in the tree */
 
-    /* Creates an empty BSTMap. */
+    /** Creates an empty BSTMap. */
     public BSTMap() {
         this.clear();
     }
 
-    /* Removes all of the mappings from this map. */
+    /** Removes all of the mappings from this map. */
     @Override
     public void clear() {
         root = null;
