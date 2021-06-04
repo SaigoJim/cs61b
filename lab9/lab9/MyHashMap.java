@@ -19,7 +19,7 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
     private int size;
 
     private double loadFactor() {
-        return (double)size / (double)buckets.length;
+        return (double) size / (double) buckets.length;
     }
 
     public MyHashMap() {
