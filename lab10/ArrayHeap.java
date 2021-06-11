@@ -170,11 +170,11 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
             return null;
         }
         T min = peek();
-        /*if (size == 1) {
+        if (size == 1) {
             size -= 1;
             contents[1] = null;
             return min;
-        }*/
+        }
         int rightMostSpot = size;
         swap(1, rightMostSpot);
         contents[rightMostSpot] = null;
@@ -292,6 +292,9 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
         this.contents = temp;
     }
 
+    @Test
+    public void testChangePriority() {
+    }
     @Test
     public void testIndexing() {
         assertEquals(6, leftIndex(3));
