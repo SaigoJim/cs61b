@@ -203,7 +203,7 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
     @Override
     public void changePriority(T item, double priority) {
         for (int i = 1; i <= size; i += 1) {
-            if (contents[i].equals(item)) {
+            if (contents[i].myItem.equals(item)) {
                 contents[i].myPriority = priority;
                 swim(i);
                 sink(i);
@@ -293,7 +293,50 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
     }
 
     @Test
-    public void testChangePriority() {
+    public void testChangePriority1() {
+        ArrayHeap<String> pq = new ArrayHeap<>();
+        pq.size = 7;
+        for (int i = 1; i <= 7; i += 1) {
+            pq.contents[i] = new ArrayHeap<String>.Node("x" + i, i);
+        }
+        // Original
+        System.out.println("PQ before changing priority:");
+        System.out.println(pq);
+
+        // Change Priority of "x6"
+        pq.changePriority("x6", 0);
+        System.out.println("PQ after sinking:");
+        System.out.println(pq);
+        assertEquals("x2", pq.contents[2].myItem);
+        assertEquals("x4", pq.contents[4].myItem);
+        assertEquals("x3", pq.contents[6].myItem);
+        assertEquals("x1", pq.contents[3].myItem);
+        assertEquals("x5", pq.contents[5].myItem);
+        assertEquals("x6", pq.contents[1].myItem);
+        assertEquals("x7", pq.contents[7].myItem);
+    }
+    @Test
+    public void testBetterP() {
+        ArrayHeap<String> pq = new ArrayHeap<>();
+        pq.size = 7;
+        for (int i = 1; i <= 7; i += 1) {
+            pq.contents[i] = new ArrayHeap<String>.Node("x" + i, i);
+        }
+        // Original
+        System.out.println("PQ before changing priority:");
+        System.out.println(pq);
+
+        // Change Priority of "x6"
+        pq.changePriority("x3", 0.5);
+        System.out.println("PQ after sinking:");
+        System.out.println(pq);
+        assertEquals("x2", pq.contents[2].myItem);
+        assertEquals("x4", pq.contents[4].myItem);
+        assertEquals("x3", pq.contents[1].myItem);
+        assertEquals("x1", pq.contents[3].myItem);
+        assertEquals("x5", pq.contents[5].myItem);
+        assertEquals("x6", pq.contents[6].myItem);
+        assertEquals("x7", pq.contents[7].myItem);
     }
     @Test
     public void testIndexing() {
