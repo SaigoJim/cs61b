@@ -3,14 +3,18 @@ package byog.WorldMaterial;
 import byog.TileEngine.TETile;
 import byog.TileEngine.Tileset;
 
+import java.awt.*;
+
 public class Room {
     Position pos;
     int width;
     int height;
-    public Room(Position p, int w, int h) {
+    int mark;
+    public Room(Position p, int w, int h, int mark) {
         pos = p;
         width = w;
         height = h;
+        this.mark = mark;
     }
 
     public boolean isOverLap(Room other) {
@@ -99,6 +103,7 @@ public class Room {
                 addRow(tiles, new Position(startX, startY), rowLength, Tileset.WALL);
             }
         }
+        //tiles[pos.xPos][pos.yPos] = new TETile((char)(mark + '0'), Color.green, Color.black, "mark");
     }
     /** Add a row of tile from Position p with length of rowLength in the Tiles. */
     private static void addRow(TETile[][] tiles, Position p, int rowLength, TETile tile) {

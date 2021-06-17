@@ -5,6 +5,7 @@ public class Line {
     Position end;
     boolean xAxis;
     boolean yAxis;
+    int length;
     public Line(Position s, Position e) {
         start = s;
         end = e;
@@ -15,6 +16,7 @@ public class Line {
             xAxis = true;
             yAxis = false;
         }
+        length = getLength();
     }
     public Position middlePoint() {
         if (xAxis) {
@@ -24,5 +26,11 @@ public class Line {
     }
     public boolean isyAxis() {
         return yAxis;
+    }
+    private int getLength() {
+        if (isyAxis()) {
+            return Math.abs(start.yPos - end.yPos + 1);
+        }
+        return Math.abs(start.xPos - end.xPos + 1);
     }
 }

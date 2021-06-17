@@ -44,18 +44,14 @@ public class HallWay {
        if (intersected) {
            drawIntersected(tiles);
        } else {
-           //drawNotIntersected(tiles);
+           drawNotIntersected(tiles);
        }
     }
     private void drawIntersected(TETile[][] tiles) {
-        Position startPoint, turnPoint, endPoint;
+        Position startPoint, endPoint;
         startPoint = target.middlePoint();
         endPoint = source.middlePoint();
-        turnPoint = new Position(endPoint.xPos, startPoint.yPos);
-        drawHallWay(tiles, startPoint, turnPoint);
-        //drawHallWay(tiles, startPoint, new Position(turnPoint));
-        drawHallWay(tiles, turnPoint, endPoint);
-        drawHallWayCorner(tiles, turnPoint);
+        drawL(tiles, startPoint, endPoint);
     }
     private void drawHallWayCorner(TETile[][] tiles, Position tP) {
         drawRow(tiles, tP, 3, Tileset.WALL);
@@ -71,33 +67,92 @@ public class HallWay {
         int y = tP.yPos + 1;
 
         // downPort
-        if (tiles[x][y - 2] != Tileset.FLOOR) {
+        if (tiles[x][y - 2] == Tileset.NOTHING) {
             tiles[x][y - 1] = Tileset.WALL;
         }
         // upPort
-        if (tiles[x][y + 2] != Tileset.FLOOR) {
+        if (tiles[x][y + 2] == Tileset.NOTHING) {
             tiles[x][y + 1] = Tileset.WALL;
         }
         // leftPort
-        if (tiles[x - 2][y] != Tileset.FLOOR) {
+        if (tiles[x - 2][y] == Tileset.NOTHING) {
             tiles[x - 1][y] = Tileset.WALL;
         }
         // rightPort
-        if (tiles[x + 2][y] != Tileset.FLOOR) {
+        if (tiles[x + 2][y] == Tileset.NOTHING) {
             tiles[x + 1][y] = Tileset.WALL;
         }
     }
     private void drawNotIntersected(TETile[][] tiles) {
+        if (isMatched()) {
+            drawMiddleMatch(tiles);
+        } else {
+            drawMiddleNotMatch(tiles);
+        }
+    }
+    private boolean isMatched() {
+        if (isIntersected()) {
+            return false;
+        }
+        Position startPoint, endPoint;
+        startPoint = target.middlePoint();
+        endPoint = source.middlePoint();
+        int sourceHalfWidth = source.length / 2;
+        int distanceBetweenMiddle;
+        if (source.isyAxis()) {
+            distanceBetweenMiddle = Math.abs(startPoint.yPos - endPoint.yPos);
+        } else {
+            distanceBetweenMiddle = Math.abs(startPoint.xPos - endPoint.xPos);
+        }
+        return distanceBetweenMiddle < sourceHalfWidth;
+    }
+    private void drawMiddleMatch(TETile[][] tiles) {
         Position startPoint, endPoint;
         startPoint = target.middlePoint();
         if (source.isyAxis()) {
-            endPoint = new Position(source.start.xPos, startPoint.xPos);
+            endPoint = new Position(source.start.xPos, startPoint.yPos);
         } else {
             endPoint = new Position(startPoint.xPos, source.start.yPos);
         }
-        drawHallWay(tiles, startPoint, endPoint);
+        drawLineSegment(tiles, startPoint, endPoint);
     }
-    private void drawHallWay(TETile[][] tiles, Position s, Position e) {
+    private void drawMiddleNotMatch(TETile[][] tiles) {
+        Position startPoint, endPoint;
+        startPoint = target.middlePoint();
+        endPoint = source.middlePoint();
+        drawL(tiles, startPoint, endPoint);
+        drawHallWayCorner(tiles, startPoint);
+        drawHallWayCorner(tiles, endPoint);
+        openPort(tiles, startPoint);
+        openPort(tiles, endPoint);
+    }
+    private void openPort(TETile[][] tiles, Position tP) {
+        int x = tP.xPos;
+        int y = tP.yPos;
+        // centerPort
+        if ((tiles[x - 1][y] == Tileset.FLOOR && tiles[x + 1][y] == Tileset.FLOOR)
+                || (tiles[x][y - 1] == Tileset.FLOOR && tiles[x][y + 1] == Tileset.FLOOR)) {
+            tiles[x][y] = Tileset.FLOOR;
+        }
+        // downPort
+        else if (tiles[x - 1][y - 1] == Tileset.FLOOR && tiles[x + 1][y - 1] == Tileset.FLOOR) {
+            tiles[x][y - 1] = Tileset.FLOOR;
+        }
+        // upPort
+        else if (tiles[x - 1][y + 1] == Tileset.FLOOR && tiles[x + 1][y + 1] == Tileset.FLOOR) {
+            tiles[x][y + 1] = Tileset.FLOOR;
+        }
+
+    }
+
+    private void drawL(TETile[][] tiles, Position startPoint, Position endPoint) {
+        Position turnPoint;
+        turnPoint = new Position(endPoint.xPos, startPoint.yPos);
+        drawLineSegment(tiles, startPoint, turnPoint);
+        drawLineSegment(tiles, turnPoint, endPoint);
+        drawHallWayCorner(tiles, turnPoint);
+    }
+    private void drawLineSegment(TETile[][] tiles, Position s, Position e) {
         if (s.yPos == e.yPos) {
             int length = Math.abs(s.xPos - e.xPos) + 1;
             Position p;
@@ -125,17 +180,23 @@ public class HallWay {
     }
     private void drawCol(TETile[][] tiles, Position p, int colLength, TETile tile) {
         for (int i = 0; i < colLength; i += 1) {
-            if (tiles[p.xPos][p.yPos + i] == Tileset.NOTHING || tiles[p.xPos][p.yPos + i] == Tileset.WALL) {
+            if (tiles[p.xPos][p.yPos + i] != Tileset.FLOOR) {
                 tiles[p.xPos][p.yPos + i] = tile;
             }
+            /*if (tiles[p.xPos][p.yPos + i] == Tileset.NOTHING || tiles[p.xPos][p.yPos + i] == Tileset.WALL) {
+                tiles[p.xPos][p.yPos + i] = tile;
+            }*/
         }
     }
     /** Add a row of tile from Position p with length of rowLength in the Tiles. */
     private static void drawRow(TETile[][] tiles, Position p, int rowLength, TETile tile) {
         for (int i = 0; i < rowLength; i += 1) {
-            if (tiles[p.xPos + i][p.yPos] == Tileset.NOTHING || tiles[p.xPos + i][p.yPos] == Tileset.WALL) {
+            if (tiles[p.xPos + i][p.yPos] != Tileset.FLOOR) {
                 tiles[p.xPos + i][p.yPos] = tile;
             }
+            /*if (tiles[p.xPos + i][p.yPos] == Tileset.NOTHING || tiles[p.xPos + i][p.yPos] == Tileset.WALL) {
+                tiles[p.xPos + i][p.yPos] = tile;
+            }*/
         }
     }
 }

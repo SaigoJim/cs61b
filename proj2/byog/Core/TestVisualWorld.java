@@ -10,9 +10,9 @@ import static org.junit.Assert.*;
 public class TestVisualWorld {
     @Test
     public void testOverLap() {
-        Room r1 = new Room(new Position(3, 1), 3, 10);
-        Room r2 = new Room(new Position(3, 1), 4, 5);
-        Room r3 = new Room(new Position(6, 5), 5, 6);
+        Room r1 = new Room(new Position(3, 1), 3, 10, 1);
+        Room r2 = new Room(new Position(3, 1), 4, 5, 2);
+        Room r3 = new Room(new Position(6, 5), 5, 6, 3);
         assertTrue(r1.isOverLap(r2));
         assertFalse(r1.isOverLap(r3));
     }
@@ -21,7 +21,9 @@ public class TestVisualWorld {
         ter.initialize(80, 50);
 
         // Initialize the hexWorld
-        TETile[][] world = new WorldGenerator(80, 50, 32123).getAnUniverse();
+        // 6787898
+        // 234344
+        TETile[][] world = new WorldGenerator(80, 50, 1234567).getAnUniverse();
         ter.renderFrame(world);
     }
 }
