@@ -29,11 +29,12 @@ public class TestVisualWorld {
     }
     @Test
     public void testString() {
-        String i = "n12345s";
+        String i = "n5197880843569031643s";
         String[] commands = inputParser(i);
 
         assertEquals("n", commands[0]);
-        assertEquals("12345", commands[1]);
+        assertEquals("5197880843569031643", commands[1]);
         assertEquals("s", commands[2]);
+
     }
 }

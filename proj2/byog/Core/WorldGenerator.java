@@ -14,7 +14,7 @@ public class WorldGenerator {
     private int HEIGHT;
     private final Random RANDOM;
     private TETile[][] UNIVERSE;
-    public WorldGenerator(int w, int h, int seed) {
+    public WorldGenerator(int w, int h, long seed) {
         WIDTH = w;
         HEIGHT = h;
         RANDOM = new Random(seed);
