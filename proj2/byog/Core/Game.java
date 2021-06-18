@@ -31,19 +31,19 @@ public class Game {
         // Fill out this method to run the game using the input passed in,
         // and return a 2D tile representation of the world that would have been
         // drawn if the same inputs had been given to playWithKeyboard().
-        TETile[][] finalWorldFrame = new TETile[WIDTH][HEIGHT];
-        finalWorldFrame = WorldGenerator.initializeTiles(finalWorldFrame);
+        //TETile[][] finalWorldFrame = new TETile[WIDTH][HEIGHT];
+        //finalWorldFrame = WorldGenerator.initializeTiles(finalWorldFrame);
         // Parse the CommandLineString
-        String[] commands = inputParser(input);
-        String state = commands[0];
-        if (!state.equals("n") && !state.equals("N")) {
-            return finalWorldFrame;
-        }
-        String seedString = commands[1];
+//        String[] commands = inputParser(input);
+//        String state = commands[0];
+//        if (!state.equals("n") && !state.equals("N")) {
+//            return finalWorldFrame;
+//        }
+//        String seedString = commands[1];
         // Generate the Universe
-        int seed = Integer.parseInt(seedString);
+        int seed = Integer.parseInt(input);
         WorldGenerator wG = new WorldGenerator(WIDTH, HEIGHT, seed);
-        finalWorldFrame = wG.getAnUniverse();
+        TETile[][] finalWorldFrame = wG.getAnUniverse();
         return finalWorldFrame;
     }
     public static String[] inputParser(String input) {
