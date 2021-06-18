@@ -1,10 +1,16 @@
 package byog.WorldMaterial;
 
 public class Position {
-    public int xPos;
-    public int yPos;
+    private int xPos;
+    private int yPos;
     public Position(int x, int y) {
         xPos = x;
         yPos = y;
+    }
+    public int getxPos() {
+        return xPos;
+    }
+    public int getyPos() {
+        return yPos;
     }
 }

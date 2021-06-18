@@ -10,10 +10,10 @@ import java.util.List;
 import java.util.Random;
 
 public class WorldGenerator {
-    int WIDTH;
-    int HEIGHT;
+    private int WIDTH;
+    private int HEIGHT;
     private final Random RANDOM;
-    TETile[][] UNIVERSE;
+    private TETile[][] UNIVERSE;
     public WorldGenerator(int w, int h, int seed) {
         WIDTH = w;
         HEIGHT = h;
@@ -32,9 +32,9 @@ public class WorldGenerator {
         universe = drawInRoomsAndHallways(universe, rooms, hallWays);
         return universe;
     }
-    private TETile[][] initializeTiles(TETile[][] tiles) {
-        for (int x = 0; x < WIDTH; x += 1) {
-            for (int y = 0; y < HEIGHT; y += 1) {
+    public static TETile[][] initializeTiles(TETile[][] tiles) {
+        for (int x = 0; x < tiles.length; x += 1) {
+            for (int y = 0; y < tiles[0].length; y += 1) {
                 tiles[x][y] = Tileset.NOTHING;
             }
         }
@@ -45,9 +45,9 @@ public class WorldGenerator {
     }
     private Room creatRandomRoom(int mark) {
         Position p = creatRandomPosition();
-        int w = RANDOM.nextInt(Math.min(WIDTH - p.xPos, 20));
+        int w = RANDOM.nextInt(Math.min(WIDTH - p.getxPos(), 20));
         w = Math.max(6, w);
-        int h = RANDOM.nextInt(Math.min(HEIGHT - p.yPos, 20));
+        int h = RANDOM.nextInt(Math.min(HEIGHT - p.getyPos(), 20));
         h = Math.max(6, h);
         return new Room(p, w, h, mark);
     }
@@ -71,8 +71,10 @@ public class WorldGenerator {
     }
     private List<HallWay> getHallways(List<Room> rooms) {
         ArrayList<HallWay> hallWays = new ArrayList<>();
-        //HallWay hw1 = new HallWay(rooms.get(0), rooms.get(1));
-        //hallWays.add(hw1);
+//        HallWay hw = new HallWay(rooms.get(2), rooms.get(3));
+//        HallWay hw1 = new HallWay(rooms.get(14), rooms.get(15));
+//        hallWays.add(hw);
+//        hallWays.add(hw1);
         Room r = rooms.get(0);
         for (int i = 1; i < rooms.size(); i += 1) {
             hallWays.add(new HallWay(r, rooms.get(i)));
@@ -80,7 +82,8 @@ public class WorldGenerator {
         }
         return hallWays;
     }
-    private TETile[][] drawInRoomsAndHallways(TETile[][] tiles, List<Room> rooms, List<HallWay> hallWays) {
+    private TETile[][] drawInRoomsAndHallways(
+            TETile[][] tiles, List<Room> rooms, List<HallWay> hallWays) {
         for (Room r : rooms) {
             r.drawRoom(tiles);
         }

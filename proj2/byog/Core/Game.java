@@ -28,13 +28,44 @@ public class Game {
      * @return the 2D TETile[][] representing the state of the world
      */
     public TETile[][] playWithInputString(String input) {
-        // TODO: Fill out this method to run the game using the input passed in,
+        // Fill out this method to run the game using the input passed in,
         // and return a 2D tile representation of the world that would have been
         // drawn if the same inputs had been given to playWithKeyboard().
-
+        TETile[][] finalWorldFrame = new TETile[WIDTH][HEIGHT];
+        finalWorldFrame = WorldGenerator.initializeTiles(finalWorldFrame);
         // Parse the CommandLineString
+        String[] commands = inputParser(input);
+        String state = commands[0];
+        if (!state.equals("n") && !state.equals("N")) {
+            return finalWorldFrame;
+        }
+        String seedString = commands[1];
         // Generate the Universe
-        TETile[][] finalWorldFrame = null;
+        int seed = Integer.parseInt(seedString);
+        WorldGenerator wG = new WorldGenerator(WIDTH, HEIGHT, seed);
+        finalWorldFrame = wG.getAnUniverse();
         return finalWorldFrame;
+    }
+    public static String[] inputParser(String input) {
+        String[] returnStrings = new String[4];
+        //String n = String.valueOf(input.charAt(0));
+        returnStrings[0] = String.valueOf(input.charAt(0));
+        StringBuilder seedSB = new StringBuilder();
+        int seedEndIndex = 0;
+        for (int i = 1; i < input.length(); i += 1) {
+            char letter = input.charAt(i);
+            if (letter >= '0' && letter <= '9') {
+                seedSB.append(letter);
+            } else {
+                seedEndIndex = i;
+                break;
+            }
+        }
+        String seed = seedSB.toString();
+        returnStrings[1] = seed;
+        String save = String.valueOf(input.charAt(seedEndIndex));
+        returnStrings[2] = save;
+        returnStrings[3] = input.substring(seedEndIndex + 1);
+        return returnStrings;
     }
 }

@@ -1,10 +1,11 @@
 package byog.Core;
 import byog.TileEngine.TERenderer;
 import byog.TileEngine.TETile;
-import byog.WorldMaterial.HallWay;
 import byog.WorldMaterial.Position;
 import byog.WorldMaterial.Room;
 import org.junit.Test;
+
+import static byog.Core.Game.inputParser;
 import static org.junit.Assert.*;
 
 public class TestVisualWorld {
@@ -25,5 +26,14 @@ public class TestVisualWorld {
         // 234344
         TETile[][] world = new WorldGenerator(80, 50, 1234567).getAnUniverse();
         ter.renderFrame(world);
+    }
+    @Test
+    public void testString() {
+        String i = "n12345s";
+        String[] commands = inputParser(i);
+
+        assertEquals("n", commands[0]);
+        assertEquals("12345", commands[1]);
+        assertEquals("s", commands[2]);
     }
 }

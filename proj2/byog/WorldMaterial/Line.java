@@ -9,10 +9,10 @@ public class Line {
     public Line(Position s, Position e) {
         start = s;
         end = e;
-        if (start.xPos == end.xPos) {
+        if (start.getxPos() == end.getxPos()) {
             xAxis = false;
             yAxis = true;
-        } else if (start.yPos == end.yPos) {
+        } else if (start.getyPos() == end.getyPos()) {
             xAxis = true;
             yAxis = false;
         }
@@ -20,17 +20,31 @@ public class Line {
     }
     public Position middlePoint() {
         if (xAxis) {
-            return new Position((start.xPos + end.xPos)/2, start.yPos);
+            return new Position((start.getxPos() + end.getxPos()) / 2, start.getyPos());
         }
-        return new Position(start.xPos, (start.yPos + end.yPos) / 2);
+        return new Position(start.getxPos(), (start.getyPos() + end.getyPos()) / 2);
     }
     public boolean isyAxis() {
         return yAxis;
     }
     private int getLength() {
         if (isyAxis()) {
-            return Math.abs(start.yPos - end.yPos + 1);
+            return Math.abs(start.getyPos() - end.getyPos() + 1);
         }
-        return Math.abs(start.xPos - end.xPos + 1);
+        return Math.abs(start.getxPos() - end.getxPos() + 1);
     }
+    /*public boolean isTwoPointOnSameLine(Position s, Position t) {
+        return isOnePointOnLine(s) && isOnePointOnLine(t);
+    }
+    public boolean isOnePointOnLine(Position p) {
+        int smallEnd, bigEnd;
+        if (isyAxis()) {
+            smallEnd = Math.min(start.getyPos(), end.getyPos());
+            bigEnd = Math.max(start.getyPos(), end.getyPos());
+            return p.getyPos() >= smallEnd && p.getyPos() <= bigEnd;
+        }
+        smallEnd = Math.min(start.getxPos(), end.getxPos());
+        bigEnd = Math.max(start.getxPos(), end.getxPos());
+        return p.getxPos() >= smallEnd && p.getxPos() <= bigEnd;
+    }*/
 }

@@ -1,6 +1,4 @@
 package byog.lab5;
-import org.junit.Test;
-import static org.junit.Assert.*;
 
 import byog.TileEngine.TERenderer;
 import byog.TileEngine.TETile;
@@ -22,7 +20,7 @@ public class HexWorld {
         int x;
         int y;
 
-        public Position(int x, int y) {
+        Position(int x, int y) {
             this.x = x;
             this.y = y;
         }
@@ -50,7 +48,7 @@ public class HexWorld {
 
     /** Add a hexagon of side length Length to a given position (X, Y) in the Tiles. */
     public static void addHexagon(TETile[][] tiles, Position p, int length, TETile tile) {
-        for (int rowNum = 0; rowNum < 2*length; rowNum += 1) {
+        for (int rowNum = 0; rowNum < 2 * length; rowNum += 1) {
             int startX = p.x + xPointOffSet(length, rowNum);
             int startY = p.y + rowNum;
             int rowLength = length + rowLengthOffSet(length, rowNum);
@@ -62,14 +60,14 @@ public class HexWorld {
         if (rowNum < length) {
             return rowNum * 2;
         }
-        return (2*length -1 - rowNum) * 2;
+        return (2 * length - 1 - rowNum) * 2;
     }
 
     private static int xPointOffSet(int length, int rowNum) {
         if (rowNum < length) {
             return -rowNum;
         }
-        return -(2*length -1 - rowNum);
+        return -(2 * length - 1 - rowNum);
     }
 
     /** Add a row of tile from Position p with length of rowLength in the Tiles. */
@@ -93,12 +91,12 @@ public class HexWorld {
     }
 
     private static int rowOffSetOfTHs(int length, int col) {
-        return (2*length - 1) * col;
+        return (2 * length - 1) * col;
     }
 
     private static int colOffSetOfTHx(int length, int col) {
         if (col < 3) {
-            return - (length * col);
+            return -(length * col);
         }
         return length * (col - 4);
     }

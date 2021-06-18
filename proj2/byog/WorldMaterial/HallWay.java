@@ -4,67 +4,53 @@ import byog.TileEngine.TETile;
 import byog.TileEngine.Tileset;
 
 public class HallWay {
-    Line source;
-    Line target;
-    boolean intersected;
+    Line source, target;
+    Position firstPoint, secondPoint, thirdPoint;
     public HallWay(Room r1, Room r2) {
-        switch (r1.whichDirection(r2)) {
-            case 1:
-                // upLeft
-                source = r1.upLine(); target = r2.rightLine(); break;
-            case 2:
-                // upRight
-                source = r1.upLine(); target = r2.leftLine(); break;
-            case 3:
-                // upCenter
-                source = r1.upLine(); target = r2.bottomLine(); break;
-            case 4:
-                // bottomLeft
-                source = r1.bottomLine(); target = r2.rightLine(); break;
-            case 5:
-                // bottomRight
-                source = r1.bottomLine(); target = r2.leftLine(); break;
-            case 6:
-                // bottomCenter
-                source = r1.bottomLine(); target = r2.upLine(); break;
-            case 7:
-                // leftCenter
-                source = r1.leftLine(); target = r2.rightLine(); break;
-            case 8:
-                // rightCenter
-                source = r1.rightLine(); target = r2.leftLine(); break;
+        Line[] twoLines = Room.returnTwoLines(r1, r2);
+        source = twoLines[0];
+        target = twoLines[1];
+        firstPoint = target.middlePoint();
+        thirdPoint = source.middlePoint();
+        secondPoint = getSecondPoint(firstPoint, thirdPoint);
+        if (isMatched()) {
+            thirdPoint = secondPoint;
         }
-        intersected = isIntersected();
     }
-    private boolean isIntersected() {
-        return source.xAxis != target.xAxis;
+    private Position getSecondPoint(Position first, Position third) {
+        if (!source.isyAxis() && !target.isyAxis()
+                && source.start.getyPos() < target.start.getyPos()) {
+            return new Position(first.getxPos(), third.getyPos());
+        }
+        return new Position(third.getxPos(), first.getyPos());
     }
 
     public void drawHallWay(TETile[][] tiles) {
-       if (intersected) {
-           drawIntersected(tiles);
-       } else {
-           drawNotIntersected(tiles);
-       }
+        drawThreePoints(tiles, firstPoint, secondPoint, thirdPoint);
     }
-    private void drawIntersected(TETile[][] tiles) {
-        Position startPoint, endPoint;
-        startPoint = target.middlePoint();
-        endPoint = source.middlePoint();
-        drawL(tiles, startPoint, endPoint);
+    private void drawThreePoints(
+            TETile[][] tiles, Position first, Position second, Position third) {
+        drawLineSegment(tiles, first, second);
+        drawLineSegment(tiles, second, third);
+        drawHallWayCorner(tiles, second);
+        drawHallWayCorner(tiles, first);
+        drawHallWayCorner(tiles, third);
+        openPort(tiles, first);
+        openPort(tiles, third);
     }
+
     private void drawHallWayCorner(TETile[][] tiles, Position tP) {
         drawRow(tiles, tP, 3, Tileset.WALL);
-        drawRow(tiles, new Position(tP.xPos, tP.yPos + 1), 1, Tileset.WALL);
-        drawRow(tiles, new Position(tP.xPos + 1, tP.yPos + 1), 1, Tileset.FLOOR);
-        drawRow(tiles, new Position(tP.xPos + 2, tP.yPos + 1), 1, Tileset.WALL);
-        drawRow(tiles, new Position(tP.xPos, tP.yPos + 2), 3, Tileset.WALL);
+        drawRow(tiles, new Position(tP.getxPos(), tP.getyPos() + 1), 1, Tileset.WALL);
+        drawRow(tiles, new Position(tP.getxPos() + 1, tP.getyPos() + 1), 1, Tileset.FLOOR);
+        drawRow(tiles, new Position(tP.getxPos() + 2, tP.getyPos() + 1), 1, Tileset.WALL);
+        drawRow(tiles, new Position(tP.getxPos(), tP.getyPos() + 2), 3, Tileset.WALL);
 
         sealPort(tiles, tP);
     }
     private void sealPort(TETile[][] tiles, Position tP) {
-        int x = tP.xPos + 1;
-        int y = tP.yPos + 1;
+        int x = tP.getxPos() + 1;
+        int y = tP.getyPos() + 1;
 
         // downPort
         if (tiles[x][y - 2] == Tileset.NOTHING) {
@@ -83,12 +69,33 @@ public class HallWay {
             tiles[x + 1][y] = Tileset.WALL;
         }
     }
-    private void drawNotIntersected(TETile[][] tiles) {
-        if (isMatched()) {
-            drawMiddleMatch(tiles);
-        } else {
-            drawMiddleNotMatch(tiles);
+    private void openPort(TETile[][] tiles, Position tP) {
+        int x = tP.getxPos();
+        int y = tP.getyPos();
+        // leftPort
+        if (openPort(tiles, x, y)) {
+            return;
         }
+        // centerPort
+        if (openPort(tiles, x + 1, y)) {
+            return;
+        }
+        // rightPort
+        if (openPort(tiles, x + 1, y)) {
+            return;
+        }
+    }
+    private boolean openPort(TETile[][] tiles, int x, int y) {
+        if ((tiles[x - 1][y] == Tileset.FLOOR && tiles[x + 1][y] == Tileset.FLOOR)
+                || (tiles[x][y - 1] == Tileset.FLOOR && tiles[x][y + 1] == Tileset.FLOOR)) {
+            tiles[x][y] = Tileset.FLOOR;
+            return true;
+        }
+        return false;
+    }
+
+    private boolean isIntersected() {
+        return source.xAxis != target.xAxis;
     }
     private boolean isMatched() {
         if (isIntersected()) {
@@ -100,102 +107,62 @@ public class HallWay {
         int sourceHalfWidth = source.length / 2;
         int distanceBetweenMiddle;
         if (source.isyAxis()) {
-            distanceBetweenMiddle = Math.abs(startPoint.yPos - endPoint.yPos);
+            distanceBetweenMiddle = Math.abs(startPoint.getyPos() - endPoint.getyPos());
         } else {
-            distanceBetweenMiddle = Math.abs(startPoint.xPos - endPoint.xPos);
+            distanceBetweenMiddle = Math.abs(startPoint.getxPos() - endPoint.getxPos());
         }
         return distanceBetweenMiddle < sourceHalfWidth;
     }
-    private void drawMiddleMatch(TETile[][] tiles) {
-        Position startPoint, endPoint;
-        startPoint = target.middlePoint();
-        if (source.isyAxis()) {
-            endPoint = new Position(source.start.xPos, startPoint.yPos);
-        } else {
-            endPoint = new Position(startPoint.xPos, source.start.yPos);
-        }
-        drawLineSegment(tiles, startPoint, endPoint);
-    }
-    private void drawMiddleNotMatch(TETile[][] tiles) {
-        Position startPoint, endPoint;
-        startPoint = target.middlePoint();
-        endPoint = source.middlePoint();
-        drawL(tiles, startPoint, endPoint);
-        drawHallWayCorner(tiles, startPoint);
-        drawHallWayCorner(tiles, endPoint);
-        openPort(tiles, startPoint);
-        openPort(tiles, endPoint);
-    }
-    private void openPort(TETile[][] tiles, Position tP) {
-        int x = tP.xPos;
-        int y = tP.yPos;
-        // centerPort
-        if ((tiles[x - 1][y] == Tileset.FLOOR && tiles[x + 1][y] == Tileset.FLOOR)
-                || (tiles[x][y - 1] == Tileset.FLOOR && tiles[x][y + 1] == Tileset.FLOOR)) {
-            tiles[x][y] = Tileset.FLOOR;
-        }
-        // downPort
-        else if (tiles[x - 1][y - 1] == Tileset.FLOOR && tiles[x + 1][y - 1] == Tileset.FLOOR) {
-            tiles[x][y - 1] = Tileset.FLOOR;
-        }
-        // upPort
-        else if (tiles[x - 1][y + 1] == Tileset.FLOOR && tiles[x + 1][y + 1] == Tileset.FLOOR) {
-            tiles[x][y + 1] = Tileset.FLOOR;
-        }
 
-    }
-
-    private void drawL(TETile[][] tiles, Position startPoint, Position endPoint) {
-        Position turnPoint;
-        turnPoint = new Position(endPoint.xPos, startPoint.yPos);
-        drawLineSegment(tiles, startPoint, turnPoint);
-        drawLineSegment(tiles, turnPoint, endPoint);
-        drawHallWayCorner(tiles, turnPoint);
-    }
     private void drawLineSegment(TETile[][] tiles, Position s, Position e) {
-        if (s.yPos == e.yPos) {
-            int length = Math.abs(s.xPos - e.xPos) + 1;
+        if (s == e) {
+            return;
+        }
+        if (s.getyPos() == e.getyPos()) {
+            int length = Math.abs(s.getxPos() - e.getxPos()) + 1;
             Position p;
-            if (s.xPos <= e.xPos) {
+            if (s.getxPos() <= e.getxPos()) {
                 p = s;
             } else {
                 p = e;
             }
             drawRow(tiles, p, length, Tileset.WALL);
-            drawRow(tiles, new Position(p.xPos, p.yPos + 1), length, Tileset.FLOOR);
-            drawRow(tiles, new Position(p.xPos, p.yPos + 2), length, Tileset.WALL);
+            drawRow(tiles, new Position(p.getxPos(), p.getyPos() + 1), length, Tileset.FLOOR);
+            drawRow(tiles, new Position(p.getxPos(), p.getyPos() + 2), length, Tileset.WALL);
         }
-        if (s.xPos == e.xPos) {
-            int length = Math.abs(s.yPos - e.yPos) + 1;
+        if (s.getxPos() == e.getxPos()) {
+            int length = Math.abs(s.getyPos() - e.getyPos()) + 1;
             Position p;
-            if (s.yPos <= e.yPos) {
+            if (s.getyPos() <= e.getyPos()) {
                 p = s;
             } else {
                 p = e;
             }
             drawCol(tiles, p, length, Tileset.WALL);
-            drawCol(tiles, new Position(p.xPos + 1, p.yPos), length, Tileset.FLOOR);
-            drawCol(tiles, new Position(p.xPos + 2, p.yPos), length, Tileset.WALL);
+            drawCol(tiles, new Position(p.getxPos() + 1, p.getyPos()), length, Tileset.FLOOR);
+            drawCol(tiles, new Position(p.getxPos() + 2, p.getyPos()), length, Tileset.WALL);
         }
     }
     private void drawCol(TETile[][] tiles, Position p, int colLength, TETile tile) {
         for (int i = 0; i < colLength; i += 1) {
-            if (tiles[p.xPos][p.yPos + i] != Tileset.FLOOR) {
-                tiles[p.xPos][p.yPos + i] = tile;
+            if (tiles[p.getxPos()][p.getyPos() + i] != Tileset.FLOOR) {
+                tiles[p.getxPos()][p.getyPos() + i] = tile;
             }
-            /*if (tiles[p.xPos][p.yPos + i] == Tileset.NOTHING || tiles[p.xPos][p.yPos + i] == Tileset.WALL) {
-                tiles[p.xPos][p.yPos + i] = tile;
+            /*if (tiles[p.getxPos()][p.getyPos() + i] ==
+            Tileset.NOTHING || tiles[p.getxPos()][p.getyPos() + i] == Tileset.WALL) {
+                tiles[p.getxPos()][p.getyPos() + i] = tile;
             }*/
         }
     }
     /** Add a row of tile from Position p with length of rowLength in the Tiles. */
     private static void drawRow(TETile[][] tiles, Position p, int rowLength, TETile tile) {
         for (int i = 0; i < rowLength; i += 1) {
-            if (tiles[p.xPos + i][p.yPos] != Tileset.FLOOR) {
-                tiles[p.xPos + i][p.yPos] = tile;
+            if (tiles[p.getxPos() + i][p.getyPos()] != Tileset.FLOOR) {
+                tiles[p.getxPos() + i][p.getyPos()] = tile;
             }
-            /*if (tiles[p.xPos + i][p.yPos] == Tileset.NOTHING || tiles[p.xPos + i][p.yPos] == Tileset.WALL) {
-                tiles[p.xPos + i][p.yPos] = tile;
+            /*if (tiles[p.getxPos() + i][p.getyPos()] ==
+            Tileset.NOTHING || tiles[p.getxPos() + i][p.getyPos()] == Tileset.WALL) {
+                tiles[p.getxPos() + i][p.getyPos()] = tile;
             }*/
         }
     }
