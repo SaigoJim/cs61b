@@ -18,6 +18,7 @@ public class Main {
         } else {
             Game game = new Game();
             game.playWithKeyboard();
+            System.exit(0);
         }
     }
 }

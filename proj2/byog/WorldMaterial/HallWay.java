@@ -3,7 +3,10 @@ package byog.WorldMaterial;
 import byog.TileEngine.TETile;
 import byog.TileEngine.Tileset;
 
-public class HallWay {
+import java.io.Serializable;
+
+public class HallWay implements Serializable {
+    private static final long serialVersionUID = 452132343342342344L;
     Line source, target;
     Position firstPoint, secondPoint, thirdPoint;
     public HallWay(Room r1, Room r2) {

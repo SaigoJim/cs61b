@@ -41,6 +41,7 @@ public class TERenderer {
         StdDraw.clear(new Color(0, 0, 0));
 
         StdDraw.enableDoubleBuffering();
+        //headsUPDisplay();
         StdDraw.show();
     }
 
@@ -96,6 +97,7 @@ public class TERenderer {
                 world[x][y].draw(x + xOffset, y + yOffset);
             }
         }
+        //headsUPDisplay();
         StdDraw.show();
     }
 }

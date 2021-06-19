@@ -3,7 +3,10 @@ package byog.WorldMaterial;
 import byog.TileEngine.TETile;
 import byog.TileEngine.Tileset;
 
-public class Room {
+import java.io.Serializable;
+
+public class Room implements Serializable {
+    private static final long serialVersionUID = 17236732674223L;
     Position pos;
     int width;
     int height;

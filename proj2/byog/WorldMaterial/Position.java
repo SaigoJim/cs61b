@@ -1,6 +1,9 @@
 package byog.WorldMaterial;
 
-public class Position {
+import java.io.Serializable;
+
+public class Position implements Serializable {
+    private static final long serialVersionUID = 874267321223423L;
     private int xPos;
     private int yPos;
     public Position(int x, int y) {
