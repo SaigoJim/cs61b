@@ -34,7 +34,7 @@ public class Game {
             StdDraw.show();
             return;
         }
-        ter.initialize(WIDTH, HEIGHT + 3);
+        ter.initialize(WIDTH, HEIGHT + 1);
         TETile[][] tiles = playWithInputString(startCommand);
         ter.renderFrame(tiles);
         while (!gameOver) {

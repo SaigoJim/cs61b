@@ -84,7 +84,7 @@ public class WorldGenerator implements Serializable {
     }
     private Position creatRandomPlayer(TETile[][] tiles) {
         Position p = creatRandomPosition();
-        while (tiles[p.getxPos()][p.getyPos()] != Tileset.FLOOR) {
+        while (!tiles[p.getxPos()][p.getyPos()].equals(Tileset.FLOOR)) {
             p = creatRandomPosition();
         }
         return p;
@@ -99,17 +99,17 @@ public class WorldGenerator implements Serializable {
     private boolean isRightSpot(TETile[][] tiles, Position p) {
         int x = p.getxPos();
         int y = p.getyPos();
-        if ( x < 0 || x >= tiles.length) {
+        if (x < 0 || x >= tiles.length) {
             return false;
         }
-        if ( y < 0 || y >= tiles[0].length) {
+        if (y < 0 || y >= tiles[0].length) {
             return false;
         }
-        if (tiles[x][y] != Tileset.WALL) {
+        if (!tiles[x][y].equals(Tileset.WALL)) {
             return false;
         }
-        if (tiles[x + 1][y] == Tileset.FLOOR || tiles[x][y + 1] == Tileset.FLOOR
-                || tiles[x - 1][y] == Tileset.FLOOR || tiles[x][y - 1] == Tileset.FLOOR) {
+        if (tiles[x + 1][y].equals(Tileset.FLOOR) || tiles[x][y + 1].equals(Tileset.FLOOR)
+                || tiles[x - 1][y].equals(Tileset.FLOOR) || tiles[x][y - 1].equals(Tileset.FLOOR)) {
             return true;
         }
         return false;
