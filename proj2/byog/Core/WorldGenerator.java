@@ -99,6 +99,12 @@ public class WorldGenerator implements Serializable {
     private boolean isRightSpot(TETile[][] tiles, Position p) {
         int x = p.getxPos();
         int y = p.getyPos();
+        if ( x < 0 || x >= tiles.length) {
+            return false;
+        }
+        if ( y < 0 || y >= tiles[0].length) {
+            return false;
+        }
         if (tiles[x][y] != Tileset.WALL) {
             return false;
         }
