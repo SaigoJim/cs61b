@@ -101,8 +101,7 @@ public class WorldGenerator implements Serializable {
         int y = p.getyPos();
         if (x < 2 || x > tiles.length - 3) {
             return false;
-        }
-        if (y < 2 || y > tiles[0].length - 3) {
+        } else if (y < 2 || y > tiles[0].length - 3) {
             return false;
         }
         if (!tiles[x][y].equals(Tileset.WALL)) {
