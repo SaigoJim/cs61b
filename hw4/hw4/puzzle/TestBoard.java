@@ -16,12 +16,92 @@ public class TestBoard {
             }
         }
         Board b = new Board(x);
-        assertEquals("Your Board class is not being initialized with the right values.", 0, b.tileAt(0, 0));
-        assertEquals("Your Board class is not being initialized with the right values.", 1, b.tileAt(0, 1));
-        assertEquals("Your Board class is not being initialized with the right values.", 2, b.tileAt(1, 0));
-        assertEquals("Your Board class is not being initialized with the right values.", 3, b.tileAt(1, 1));
+        assertEquals("Your Board class is not being initialized with the right values.",
+                0, b.tileAt(0, 0));
+        assertEquals("Your Board class is not being initialized with the right values.",
+                1, b.tileAt(0, 1));
+        assertEquals("Your Board class is not being initialized with the right values.",
+                2, b.tileAt(1, 0));
+        assertEquals("Your Board class is not being initialized with the right values.",
+                3, b.tileAt(1, 1));
 
         x[1][1] = 1000;
-        assertEquals("Your Board class is mutable and you should be making a copy of the values in the passed tiles array. Please see the FAQ!", 3, b.tileAt(1, 1));
+        assertEquals("Your Board class is mutable and "
+                        + "you should be making a copy of "
+                        + "the values in the passed tiles array. Please see the FAQ!",
+                3, b.tileAt(1, 1));
+    }
+    @Test
+    public void testNeigbors() {
+        int r = 3;
+        int c = 3;
+        int[][] x = new int[r][c];
+        int cnt = 0;
+        for (int i = 0; i < r; i += 1) {
+            for (int j = 0; j < c; j += 1) {
+                x[i][j] = cnt;
+                cnt += 1;
+            }
+        }
+        x[0][0] = x[1][1];
+        x[1][1] = 0;
+        Board b = new Board(x);
+        System.out.println(b.toString());
+        for (WorldState w : b.neighbors()) {
+            System.out.println(w.toString());
+        }
+    }
+
+    @Test
+    public void testGoal() {
+        int r = 3;
+        int c = 3;
+        int[][] x = new int[r][c];
+        int cnt = 0;
+        for (int i = 0; i < r; i += 1) {
+            for (int j = 0; j < c; j += 1) {
+                x[i][j] = cnt;
+                cnt += 1;
+            }
+        }
+        x[0][0] = x[1][1];
+        x[1][1] = 0;
+//        Board b = new Board(x);
+//        Board g = new Board(b.creatGoal());
+//        System.out.println(g);
+    }
+
+    @Test
+    public void testHamming() {
+        int r = 3;
+        int c = 3;
+        int[][] x = new int[r][c];
+        int cnt = 0;
+        for (int i = 0; i < r; i += 1) {
+            for (int j = 0; j < c; j += 1) {
+                x[i][j] = cnt;
+                cnt += 1;
+            }
+        }
+        Board b = new Board(x);
+        System.out.println(b.toString());
+        assertEquals(8, b.hamming());
+    }
+
+    @Test
+    public void testManhatton() {
+        int r = 3;
+        int c = 3;
+        int[][] x = new int[r][c];
+        int cnt = 0;
+        for (int i = 0; i < r; i += 1) {
+            for (int j = 0; j < c; j += 1) {
+                x[i][j] = cnt;
+                cnt += 1;
+            }
+        }
+        Board b = new Board(x);
+        System.out.println(b.toString());
+        assertEquals(12, b.manhattan());
     }
 } 

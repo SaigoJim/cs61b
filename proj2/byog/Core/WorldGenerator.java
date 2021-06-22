@@ -18,12 +18,14 @@ public class WorldGenerator implements Serializable {
     private TETile[][] UNIVERSE;
     private Position player;
     private Position treasureSpot;
+    private boolean isArrived;
     public WorldGenerator(int w, int h) {
         RANDOM = new Random(0);
         WIDTH = w;
         HEIGHT = h;
         UNIVERSE = new TETile[WIDTH][HEIGHT];
         UNIVERSE = initializeTiles(UNIVERSE);
+        isArrived = false;
     }
     public WorldGenerator(int w, int h, long seed) {
         WIDTH = w;
@@ -57,7 +59,6 @@ public class WorldGenerator implements Serializable {
     }
     private boolean isValidMove(int x, int y) {
         //return UNIVERSE[x][y] == Tileset.FLOOR;
-        TETile l = UNIVERSE[x][y];
         return !UNIVERSE[x][y].equals(Tileset.WALL);
     }
     private void cleanPlayer() {
@@ -114,9 +115,17 @@ public class WorldGenerator implements Serializable {
         return false;
     }
     private TETile[][] drawInPlayerAndTreasure(TETile[][] tiles, Position p, Position t) {
+        if (p.equals(t)) {
+            tiles[p.getxPos()][p.getyPos()] = Tileset.UNLOCKED_DOOR;
+            isArrived = true;
+            return tiles;
+        }
         tiles[p.getxPos()][p.getyPos()] = Tileset.PLAYER;
         tiles[t.getxPos()][t.getyPos()] = Tileset.LOCKED_DOOR;
         return tiles;
+    }
+    public boolean isArrived() {
+        return isArrived;
     }
     private Position creatRandomPosition() {
         return new Position(RANDOM.nextInt(WIDTH - 10), RANDOM.nextInt(HEIGHT - 10));

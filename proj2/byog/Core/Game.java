@@ -18,6 +18,7 @@ import java.io.ObjectOutputStream;
 public class Game {
     TERenderer ter = new TERenderer();
     boolean gameOver = false;
+    boolean playerWin = false;
     /* Feel free to change the width and height. */
     public static final int WIDTH = 80;
     public static final int HEIGHT = 30;
@@ -28,6 +29,8 @@ public class Game {
      * Method used for playing a fresh game. The game should start from the main menu.
      */
     public void playWithKeyboard() {
+        gameOver = false;
+        playerWin = false;
         String startCommand = mainMenu();
         if (startCommand.equals("Q") || startCommand.equals("q")) {
             StdDraw.clear(StdDraw.WHITE);
@@ -42,7 +45,25 @@ public class Game {
             playerCommand = mouseAndKeyBoard(finalWorldFrame);
             tiles = playWithInputString(playerCommand);
             ter.renderFrame(tiles);
+            if (playerWin) {
+                StdDraw.pause(5000);
+                showEndMessage();
+                gameOver = true;
+            }
         }
+        if (playerWin) {
+            playWithKeyboard();
+        }
+    }
+    private void showEndMessage() {
+        StdDraw.clear();
+        StdDraw.clear(Color.black);
+        Font bigFont = new Font("Monaco", Font.BOLD, 50);
+        StdDraw.setFont(bigFont);
+        StdDraw.setPenColor(Color.white);
+        StdDraw.text(WIDTH / 2, HEIGHT / 2, "You win!");
+        StdDraw.show();
+        StdDraw.pause(5000);
     }
     private String mouseAndKeyBoard(TETile[][] tiles) {
         StringBuilder inputSB = new StringBuilder();
@@ -56,35 +77,6 @@ public class Game {
                 StdDraw.textLeft(0, HEIGHT, description);
                 StdDraw.show();
             }
-            if (!StdDraw.hasNextKeyTyped()) {
-                continue;
-            }
-            char key = StdDraw.nextKeyTyped();
-            inputSB.append(key);
-            if (key == ':') {
-                continue;
-            } else {
-                break;
-            }
-        }
-        return inputSB.toString();
-    }
-//    private void headsUPDisplay(TETile[][] tiles) {
-//        while (true) {
-//        if (StdDraw.isMousePressed()) {
-//            ter.renderFrame(tiles);
-//            int x = (int) StdDraw.mouseX();
-//            int y = (int) StdDraw.mouseY();
-//            String description = tiles[x][y].description();
-//            StdDraw.setPenColor(Color.white);
-//            StdDraw.textLeft(0, HEIGHT, description);
-//            StdDraw.show();
-//        }
-//        }
-//    }
-    private String typedInCommand() {
-        StringBuilder inputSB = new StringBuilder();
-        while (true) {
             if (!StdDraw.hasNextKeyTyped()) {
                 continue;
             }
@@ -218,27 +210,44 @@ public class Game {
         char[] commands = command.toCharArray();
         char head = commands[0];
         TETile[][] tiles = null;
+
         if (head >= '0' && head <= '9') {
-            long seed = Long.parseLong(command);
-            WG = new WorldGenerator(WIDTH, HEIGHT, seed);
+            generateSeed(command);
         } else if (command.equals("L") || command.equals("l")) {
-            WG = deSerializeWorldGenerator();
-            if (WG == null) {
-                gameOver = true;
-                return tiles;
-            }
-            gameOver = false;
+            loadPrevWorld();
         } else if (command.equals(":Q") || command.equals(":q")) {
-            // Serialize
-            gameOver = true;
-            serializeWorldGenerator();
+            closeCurWorld();
         } else {
-            for (char c : commands) {
-                WG.movePlayer(c);
-            }
+            doMovements(commands);
+        }
+
+        if (WG == null) {
+            gameOver = true;
+            return tiles;
         }
         tiles = WG.getAnUniverse();
         return tiles;
+    }
+    private void generateSeed(String command) {
+        long seed = Long.parseLong(command);
+        WG = new WorldGenerator(WIDTH, HEIGHT, seed);
+    }
+    private void loadPrevWorld() {
+        WG = deSerializeWorldGenerator();
+        gameOver = false;
+    }
+    private void closeCurWorld() {
+        serializeWorldGenerator();
+        gameOver = true;
+    }
+    private void doMovements(char[] commands) {
+        for (char c : commands) {
+            WG.movePlayer(c);
+            if (WG.isArrived()) {
+                playerWin = true;
+                break;
+            }
+        }
     }
     private void serializeWorldGenerator() {
         File f = new File("./savefile.txt");

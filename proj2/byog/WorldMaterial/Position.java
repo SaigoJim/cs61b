@@ -16,4 +16,15 @@ public class Position implements Serializable {
     public int getyPos() {
         return yPos;
     }
+    @Override
+    public boolean equals(Object other) {
+        if (other.getClass() != this.getClass()) {
+            return false;
+        }
+        Position o = (Position) other;
+        if (o == this) {
+            return true;
+        }
+        return o.getxPos() == this.getxPos() && o.getyPos() == this.getyPos();
+    }
 }
