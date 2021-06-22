@@ -20,41 +20,29 @@ public class Board implements WorldState {
     /** Constructs a board from an N-by-N array of tiles where
      tiles[i][j] = tile at row i, column j */
     public Board(int[][] tiles) {
+        hammingEstimate = 0;
+        manhattanEstimate = 0;
+        hashCode = 0;
         size = tiles.length;
         this.tiles = copyNbyNGrid(tiles);
-        //hammingEstimate = getHammingEstimate();
-        //manhattanEstimate = getManhattanEstimate();
-    }
-    private int getHammingEstimate() {
-        int estimate = 0;
-        for (int i = 0; i < size; i += 1) {
-            for (int j = 0; j < size; j += 1) {
-                int goalVal = size * i + j + 1;
-                if (tileAt(i, j) != 0 && tileAt(i, j) != goalVal) {
-                    estimate += 1;
-                }
-            }
-        }
-        return estimate;
     }
 
-    private int getManhattanEstimate() {
-        int estimate = 0;
-
-        for (int i = 0; i < size; i += 1) {
-            for (int j = 0; j < size; j += 1) {
-                if (tileAt(i, j) == 0) {
-                    continue;
-                }
-                int tileVal = tileAt(i, j);
-                int goalRow = getGoalRow(tileVal);
-                int goalCol = getGoalCol(tileVal);
-                int distance = Math.abs(goalRow - i) + Math.abs(goalCol - j);
-                estimate += distance;
-            }
-        }
-        return estimate;
+    private void calHashCode(int tileVal) {
+        hashCode += 31 * tileVal;
     }
+    private void calHammingEstimate(int i, int j, int tileVal) {
+        int goalVal = size * i + j + 1;
+        if (tileVal != goalVal) {
+            hammingEstimate += 1;
+        }
+    }
+    private void calManhattanEstimate(int i, int j, int tileVal) {
+        int goalRow = getGoalRow(tileVal);
+        int goalCol = getGoalCol(tileVal);
+        int distance = Math.abs(goalRow - i) + Math.abs(goalCol - j);
+        manhattanEstimate += distance;
+    }
+
     private int getGoalRow(int val) {
         return (val - 1) / size;
     }
@@ -62,29 +50,20 @@ public class Board implements WorldState {
         return (val - 1) % size;
     }
     private int[][] copyNbyNGrid(int[][] grid) {
-        int estimate = 0;
-        int hash = 0;
         int[][] array = new int[grid.length][grid.length];
         for (int i = 0; i < grid.length; i += 1) {
             for (int j = 0; j < grid.length; j += 1) {
                 array[i][j] = grid[i][j];
                 int tileVal = array[i][j];
-                hash += 31 * tileVal;
+                calHashCode(tileVal);
                 if (tileVal == 0) {
                     BLANK = new Position(i, j);
-                }
-                if (tileVal == 0) {
                     continue;
                 }
-
-                int goalRow = getGoalRow(tileVal);
-                int goalCol = getGoalCol(tileVal);
-                int distance = Math.abs(goalRow - i) + Math.abs(goalCol - j);
-                estimate += distance;
+                calManhattanEstimate(i, j, tileVal);
+                calHammingEstimate(i, j, tileVal);
             }
         }
-        manhattanEstimate = estimate;
-        hashCode = hash;
         return array;
     }
     /** Returns value of tile at row i, column j (or 0 if blank) */

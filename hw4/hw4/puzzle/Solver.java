@@ -1,17 +1,23 @@
 package hw4.puzzle;
 
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+
+import java.util.Comparator;
+
 public class Solver {
-    int moves;
-    int enqueuedTimes;
-    boolean solved;
-    SearchNode curNode;
-    ExtrinsicPQ<SearchNode> minPQ = new ArrayHeap<>();
-    List<WorldState> solution = new ArrayList<>();
-    HashMap<WorldState, SearchNode> hashTableSearchNode =  new HashMap<>();;
+    private int moves;
+    private int enqueuedTimes;
+    private boolean solved;
+    private SearchNode curNode;
+    //MinPQ<SearchNode> minPQ = new MinPQ<>(new PriorityComparator());
+    //ExtrinsicPQ<SearchNode> minPQ = new ArrayHeap<>();
+    private MinPQ<SearchNode> minPQ = new ArrayBasedHeap<>(new PriorityComparator());
+    private List<WorldState> solution = new ArrayList<>();
+    private HashMap<WorldState, SearchNode> hashTableSearchNode =  new HashMap<>();;
 
     private class SearchNode {
         WorldState content;
@@ -59,6 +65,12 @@ public class Solver {
         }
     }
 
+    private class PriorityComparator implements Comparator<SearchNode> {
+        @Override
+        public int compare(SearchNode o1, SearchNode o2) {
+            return o1.priority() - o2.priority();
+        }
+    }
     public Solver(WorldState initial) {
         moves = 0;
         enqueuedTimes = 0;
@@ -66,13 +78,13 @@ public class Solver {
         curNode = new SearchNode(initial, 0, initial.estimatedDistanceToGoal(), null);
 
         hashTableSearchNode.put(initial, curNode);
-        minPQ.insert(curNode, 0);
+        minPQ.insert(curNode);
         curNode.onQueue = true;
         enqueuedTimes += 1;
 
         if (initial.isGoal()) {
             solved = true;
-            curNode = minPQ.removeMin();
+            curNode = minPQ.delMin();
             curNode.onQueue = false;
             completeSolution();
         } else {
@@ -99,12 +111,13 @@ public class Solver {
         SearchNode neoNode = new SearchNode(worldState, curNode.moveTo + 1,
                 worldState.estimatedDistanceToGoal(), curNode);
         hashTableSearchNode.put(worldState, neoNode);
-        minPQ.insert(neoNode, neoNode.priority());
+        minPQ.insert(neoNode);
         neoNode.onQueue = true;
         enqueuedTimes += 1;
     }
     private void processMin() {
-        curNode = minPQ.removeMin();
+        curNode = minPQ.min();
+        minPQ.delMin();
         curNode.onQueue = false;
         for (WorldState neighbor : curNode.content.neighbors()) {
             if (neighbor.isGoal()) {
@@ -130,11 +143,11 @@ public class Solver {
             oldNode.moveTo = curNode.moveTo + 1;
             oldNode.parentNode = curNode;
             if (!oldNode.onQueue) {
-                minPQ.insert(oldNode, oldNode.priority());
+                minPQ.insert(oldNode);
                 oldNode.onQueue = true;
                 enqueuedTimes += 1;
             } else {
-                minPQ.changePriority(oldNode, oldNode.priority());
+                minPQ.changePriority(oldNode);
             }
         }
     }
@@ -151,7 +164,7 @@ public class Solver {
         return solution;
     }
 
-    public int getEnqueuedTimes() {
+    private int getEnqueuedTimes() {
         return enqueuedTimes;
     }
 }

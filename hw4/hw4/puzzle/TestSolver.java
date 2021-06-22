@@ -106,7 +106,7 @@ public class TestSolver {
         }
     }
 
-    @Test(timeout = 40000)
+    @Test(timeout = 120000)
     public void test3x3BoardPuzzles() {
         for (int i = 0; i <= 30; i += 1) {
             String pnum = String.format("%02d", i);
@@ -115,6 +115,8 @@ public class TestSolver {
             int numMoves = i;
             BoardPuzzleSolution bps = new BoardPuzzleSolution(puzzleName, b, numMoves);
             Solver s = new Solver(b);
+            int moves = s.moves();
+            System.out.println(puzzleName + " : " + moves);
             assertEquals("Wrong number of moves on " + puzzleName, bps.numMoves, s.moves());
         }
     }
