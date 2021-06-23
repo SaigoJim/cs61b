@@ -2,7 +2,7 @@ package hw4.puzzle;
 
 import edu.princeton.cs.algs4.MinPQ;
 
-import java.util.Stack;
+import edu.princeton.cs.algs4.Stack;
 
 public class Solver {
     private Stack<WorldState> solution;
