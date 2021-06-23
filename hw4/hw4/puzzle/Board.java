@@ -25,22 +25,44 @@ public class Board implements WorldState {
         hashCode = 0;
         size = tiles.length;
         this.tiles = copyNbyNGrid(tiles);
+        manhattanEstimate = calManhattanEstimate();
+        hammingEstimate = calHammingEstimate();
     }
 
     private void calHashCode(int tileVal) {
         hashCode += 31 * tileVal;
     }
-    private void calHammingEstimate(int i, int j, int tileVal) {
-        int goalVal = size * i + j + 1;
-        if (tileVal != goalVal) {
-            hammingEstimate += 1;
+    private int calHammingEstimate() {
+        int estimate = 0;
+        for (int i = 0; i < size; i += 1) {
+            for (int j = 0; j < size; j += 1) {
+                int tileVal = tiles[i][j];
+                if (tileVal == 0) {
+                    continue;
+                }
+                int goalVal = size * i + j + 1;
+                if (tileVal != goalVal) {
+                    estimate += 1;
+                }
+            }
         }
+        return estimate;
     }
-    private void calManhattanEstimate(int i, int j, int tileVal) {
-        int goalRow = getGoalRow(tileVal);
-        int goalCol = getGoalCol(tileVal);
-        int distance = Math.abs(goalRow - i) + Math.abs(goalCol - j);
-        manhattanEstimate += distance;
+    private int calManhattanEstimate() {
+        int estimate = 0;
+        for (int i = 0; i < size; i += 1) {
+            for (int j = 0; j < size; j += 1) {
+                int tileVal = tiles[i][j];
+                if (tileVal == 0) {
+                    continue;
+                }
+                int goalRow = getGoalRow(tileVal);
+                int goalCol = getGoalCol(tileVal);
+                int distance = Math.abs(goalRow - i) + Math.abs(goalCol - j);
+                estimate += distance;
+            }
+        }
+        return estimate;
     }
 
     private int getGoalRow(int val) {
@@ -60,8 +82,6 @@ public class Board implements WorldState {
                     BLANK = new Position(i, j);
                     continue;
                 }
-                calManhattanEstimate(i, j, tileVal);
-                calHammingEstimate(i, j, tileVal);
             }
         }
         return array;
@@ -134,7 +154,7 @@ public class Board implements WorldState {
     }
     @Override
     public int hashCode() {
-        return hashCode;
+        return super.hashCode();
     }
     private boolean isTwoGridSame(int[][] g1, int[][] g2) {
         if (g1.length != g2.length || g1[0].length != g2[0].length) {

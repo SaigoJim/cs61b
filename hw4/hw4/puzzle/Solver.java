@@ -14,7 +14,7 @@ public class Solver {
         private int priority; // estimate + moves
         private SearchNode parentNode;
 
-        public SearchNode(WorldState worldState, int moves, SearchNode prevNode) {
+        SearchNode(WorldState worldState, int moves, SearchNode prevNode) {
             content = worldState;
             moveTo = moves;
             estimate = content.estimatedDistanceToGoal();
@@ -62,7 +62,8 @@ public class Solver {
             }
             for (WorldState neighbor : currNode.content.neighbors()) {
                 if (!currNode.isParentContent(neighbor)) {
-                    SearchNode newNode = new SearchNode(neighbor, currNode.getMoveTo() + 1, currNode);
+                    SearchNode newNode = new SearchNode(neighbor,
+                            currNode.getMoveTo() + 1, currNode);
                     minPQ.insert(newNode);
                 }
             }
