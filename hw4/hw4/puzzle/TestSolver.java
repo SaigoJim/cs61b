@@ -106,7 +106,7 @@ public class TestSolver {
         }
     }
 
-    @Test(timeout = 120000)
+    @Test(timeout = 40000)
     public void test3x3BoardPuzzles() {
         for (int i = 0; i <= 30; i += 1) {
             String pnum = String.format("%02d", i);

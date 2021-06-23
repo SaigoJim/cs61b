@@ -1,170 +1,91 @@
 package hw4.puzzle;
 
+import edu.princeton.cs.algs4.MinPQ;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-
-import java.util.Comparator;
+import java.util.Stack;
 
 public class Solver {
+    private Stack<WorldState> solution;
     private int moves;
-    private int enqueuedTimes;
-    private boolean solved;
-    private SearchNode curNode;
-    //MinPQ<SearchNode> minPQ = new MinPQ<>(new PriorityComparator());
-    //ExtrinsicPQ<SearchNode> minPQ = new ArrayHeap<>();
-    private MinPQ<SearchNode> minPQ = new ArrayBasedHeap<>(new PriorityComparator());
-    private List<WorldState> solution = new ArrayList<>();
-    private HashMap<WorldState, SearchNode> hashTableSearchNode =  new HashMap<>();;
+    private class SearchNode implements Comparable<SearchNode> {
+        private WorldState content; // WorldState stored in SearchNode
+        private int moveTo; // Moves from initial to itself so far
+        private int estimate; // Manhattan estimate
+        private int priority; // estimate + moves
+        private SearchNode parentNode;
 
-    private class SearchNode {
-        WorldState content;
-        int moveTo;
-        int heuristic;
-        boolean onQueue;
-        SearchNode parentNode;
+        public SearchNode(WorldState worldState, int moves, SearchNode prevNode) {
+            content = worldState;
+            moveTo = moves;
+            estimate = content.estimatedDistanceToGoal();
+            parentNode = prevNode;
+            priority = estimate + moveTo;
+        }
 
-        SearchNode(WorldState ws, int mv, int h, SearchNode pN) {
-            onQueue = false;
-            content = ws;
-            moveTo = mv;
-            parentNode = pN;
-            heuristic = h;
+        public int getMoveTo() {
+            return moveTo;
         }
-        public int priority() {
-            return moveTo + heuristic;
+        public int getPriority() {
+            return priority;
         }
-        public boolean isParent(SearchNode other) {
-            if (!other.equals(parentNode)) {
-                return false;
-            }
-            return parentNode.isParent(other);
-        }
-        @Override
-        public boolean equals(Object other) {
-            if (other == null || other.getClass() != this.getClass()) {
-                return false;
-            }
-            if (other == this) {
-                return true;
-            }
-            SearchNode o = (SearchNode) other;
-            if (isContentEqual(o)) {
+        public boolean isParentContent(WorldState worldState) {
+            if (parentNode != null && worldState.equals(parentNode.content)) {
                 return true;
             }
             return false;
         }
         @Override
-        public int hashCode() {
-            return content.hashCode();
-        }
-        private boolean isContentEqual(SearchNode other) {
-            return content.equals(other.content);
+        public int compareTo(SearchNode o) {
+            return getPriority() - o.getPriority();
         }
     }
-
-    private class PriorityComparator implements Comparator<SearchNode> {
-        @Override
-        public int compare(SearchNode o1, SearchNode o2) {
-            return o1.priority() - o2.priority();
-        }
-    }
+    /** Constructor which solves the puzzle, computing
+     everything necessary for moves() and solution() to
+     not have to solve the problem again. Solves the
+     puzzle using the A* algorithm. Assumes a solution exists. */
     public Solver(WorldState initial) {
-        moves = 0;
-        enqueuedTimes = 0;
-        solved = false;
-        curNode = new SearchNode(initial, 0, initial.estimatedDistanceToGoal(), null);
+        MinPQ<SearchNode> minPQ = new MinPQ<>();
+        SearchNode currNode = new SearchNode(initial, 0, null);
+        minPQ.insert(currNode);
 
-        hashTableSearchNode.put(initial, curNode);
-        minPQ.insert(curNode);
-        curNode.onQueue = true;
-        enqueuedTimes += 1;
-
-        if (initial.isGoal()) {
-            solved = true;
-            curNode = minPQ.delMin();
-            curNode.onQueue = false;
-            completeSolution();
-        } else {
-            doAStar();
-        }
+        currNode = doAStar(minPQ);
+        solution = completeSolution(currNode);
+        moves = solution.size() - 1;
     }
-    private void doAStar() {
+
+    private SearchNode doAStar(MinPQ<SearchNode> minPQ) {
+        SearchNode currNode = null;
         while (!minPQ.isEmpty()) {
-            processMin();
-            if (solved) {
+            currNode = minPQ.delMin();
+            if (currNode.content.isGoal()) {
                 break;
             }
-        }
-        completeSolution();
-    }
-    private void completeSolution() {
-        while (curNode != null) {
-            solution.add(curNode.content);
-            curNode = curNode.parentNode;
-        }
-        Collections.reverse(solution);
-    }
-    private void creatANewNode(WorldState worldState) {
-        SearchNode neoNode = new SearchNode(worldState, curNode.moveTo + 1,
-                worldState.estimatedDistanceToGoal(), curNode);
-        hashTableSearchNode.put(worldState, neoNode);
-        minPQ.insert(neoNode);
-        neoNode.onQueue = true;
-        enqueuedTimes += 1;
-    }
-    private void processMin() {
-        curNode = minPQ.min();
-        minPQ.delMin();
-        curNode.onQueue = false;
-        for (WorldState neighbor : curNode.content.neighbors()) {
-            if (neighbor.isGoal()) {
-                curNode = new SearchNode(neighbor, curNode.moveTo + 1, 0, curNode);
-                solved = true;
-                moves = curNode.moveTo;
-                break;
+            for (WorldState neighbor : currNode.content.neighbors()) {
+                if (!currNode.isParentContent(neighbor)) {
+                    SearchNode newNode = new SearchNode(neighbor, currNode.getMoveTo() + 1, currNode);
+                    minPQ.insert(newNode);
+                }
             }
-            if (!hashTableSearchNode.containsKey(neighbor)) {
-                creatANewNode(neighbor);
-                continue;
-            }
-            SearchNode oldNode = hashTableSearchNode.get(neighbor);
-            reconsiderNode(oldNode);
         }
+        return currNode;
     }
 
-    private void reconsiderNode(SearchNode oldNode) {
-        if (isValidParentNode(oldNode)) {
-            return;
+    private Stack<WorldState> completeSolution(SearchNode currNode) {
+        Stack<WorldState> worldStatesStack = new Stack<>();
+        while (currNode != null) {
+            worldStatesStack.push(currNode.content);
+            currNode = currNode.parentNode;
         }
-        if (needChangeDegree(oldNode)) {
-            oldNode.moveTo = curNode.moveTo + 1;
-            oldNode.parentNode = curNode;
-            if (!oldNode.onQueue) {
-                minPQ.insert(oldNode);
-                oldNode.onQueue = true;
-                enqueuedTimes += 1;
-            } else {
-                minPQ.changePriority(oldNode);
-            }
-        }
+        return worldStatesStack;
     }
-    private boolean isValidParentNode(SearchNode oldNode) {
-        return !oldNode.onQueue && curNode.isParent(oldNode);
-    }
-    private boolean needChangeDegree(SearchNode oldNode) {
-        return oldNode.moveTo > curNode.moveTo + 1;
-    }
+    /**  Returns the minimum number of moves to solve the puzzle starting
+     at the initial WorldState. */
     public int moves() {
         return moves;
     }
+    /** Returns a sequence of WorldStates from the initial WorldState
+     to the solution. */
     public Iterable<WorldState> solution() {
         return solution;
-    }
-
-    private int getEnqueuedTimes() {
-        return enqueuedTimes;
     }
 }
