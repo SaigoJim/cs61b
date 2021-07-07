@@ -2,9 +2,11 @@ package byog.Core;
 import byog.TileEngine.TETile;
 import byog.TileEngine.Tileset;
 import byog.WorldMaterial.HallWay;
+import byog.WorldMaterial.Material;
 import byog.WorldMaterial.Position;
 import byog.WorldMaterial.Room;
 
+import byog.WorldMaterial.Character;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,10 +16,13 @@ public class WorldGenerator implements Serializable {
     private static final long serialVersionUID = 48787879342344L;
     private int WIDTH;
     private int HEIGHT;
+    private int FLOWERNUM;
     private final Random RANDOM;
     private TETile[][] UNIVERSE;
+    private Character playerX;
     private Position player;
     private Position treasureSpot;
+    private int playerFlower;
     private boolean isArrived;
     public WorldGenerator(int w, int h) {
         RANDOM = new Random(0);
@@ -31,11 +36,14 @@ public class WorldGenerator implements Serializable {
         WIDTH = w;
         HEIGHT = h;
         RANDOM = new Random(seed);
-        UNIVERSE = createAnRandomUniverse();
+        //UNIVERSE = createAnRandomUniverse();
+        UNIVERSE = constructBuildings();
+        UNIVERSE = createCharacters(UNIVERSE);
     }
     public TETile[][] getAnUniverse() {
         return UNIVERSE;
     }
+
     public void movePlayer(char move) {
         int x = player.getxPos();
         int y = player.getyPos();
@@ -59,21 +67,48 @@ public class WorldGenerator implements Serializable {
     }
     private boolean isValidMove(int x, int y) {
         //return UNIVERSE[x][y] == Tileset.FLOOR;
-        return !UNIVERSE[x][y].equals(Tileset.WALL);
+        if (UNIVERSE[x][y].equals(Tileset.FLOWER)) {
+            playerFlower += 1;
+            return true;
+        }
+        if (UNIVERSE[x][y].equals(Tileset.LOCKED_DOOR) && playerFlower < FLOWERNUM) {
+            return false;
+        }
+        return !(UNIVERSE[x][y].equals(Tileset.WALL) || UNIVERSE[x][y].equals(Tileset.NOTHING));
     }
     private void cleanPlayer() {
         UNIVERSE[player.getxPos()][player.getyPos()] = Tileset.FLOOR;
     }
-    private TETile[][] createAnRandomUniverse() {
+    public boolean isArrived() {
+        return isArrived;
+    }
+
+    private TETile[][] constructBuildings() {
         TETile[][] universe = new TETile[WIDTH][HEIGHT];
         universe = initializeTiles(universe);
         List<Room> rooms = getRandomRooms();
         List<HallWay> hallWays = getHallways(rooms);
         universe = drawInRoomsAndHallways(universe, rooms, hallWays);
-        player = creatRandomPlayer(universe);
-        treasureSpot = creatRandomTreasureSpot(universe);
-        universe = drawInPlayerAndTreasure(universe, player, treasureSpot);
         return universe;
+    }
+    private TETile[][] createCharacters(TETile[][] universe) {
+
+        Material tempPlayer = new Character(this, "player");
+        tempPlayer.draw(universe);
+        Material tempTreasure = new Character(this, "treasure");
+        tempTreasure.draw(universe);
+        player = tempPlayer.getSpot();
+        treasureSpot = tempTreasure.getSpot();
+        creatRandomFlowers(universe);
+        return universe;
+    }
+
+    private void creatRandomFlowers(TETile[][] tiles) {
+        FLOWERNUM = 3;
+        for (int i = 0; i < FLOWERNUM; i += 1) {
+            Material flower = new Character(this, "flower");
+            flower.draw(tiles);
+        }
     }
     private TETile[][] initializeTiles(TETile[][] tiles) {
         for (int x = 0; x < tiles.length; x += 1) {
@@ -83,39 +118,9 @@ public class WorldGenerator implements Serializable {
         }
         return tiles;
     }
-    private Position creatRandomPlayer(TETile[][] tiles) {
-        Position p = creatRandomPosition();
-        while (!tiles[p.getxPos()][p.getyPos()].equals(Tileset.FLOOR)) {
-            p = creatRandomPosition();
-        }
-        return p;
-    }
-    private Position creatRandomTreasureSpot(TETile[][] tiles) {
-        Position p = creatRandomPosition();
-        while (!isRightSpot(tiles, p)) {
-            p = creatRandomPosition();
-        }
-        return p;
-    }
-    private boolean isRightSpot(TETile[][] tiles, Position p) {
-        int x = p.getxPos();
-        int y = p.getyPos();
-        if (x < 2 || x > tiles.length - 3) {
-            return false;
-        } else if (y < 2 || y > tiles[0].length - 3) {
-            return false;
-        }
-        if (!tiles[x][y].equals(Tileset.WALL)) {
-            return false;
-        }
-        if (tiles[x + 1][y].equals(Tileset.FLOOR) || tiles[x][y + 1].equals(Tileset.FLOOR)
-                || tiles[x - 1][y].equals(Tileset.FLOOR) || tiles[x][y - 1].equals(Tileset.FLOOR)) {
-            return true;
-        }
-        return false;
-    }
+
     private TETile[][] drawInPlayerAndTreasure(TETile[][] tiles, Position p, Position t) {
-        if (p.equals(t)) {
+        if (p.equals(t) && playerFlower == FLOWERNUM) {
             tiles[p.getxPos()][p.getyPos()] = Tileset.UNLOCKED_DOOR;
             isArrived = true;
             return tiles;
@@ -124,10 +129,8 @@ public class WorldGenerator implements Serializable {
         tiles[t.getxPos()][t.getyPos()] = Tileset.LOCKED_DOOR;
         return tiles;
     }
-    public boolean isArrived() {
-        return isArrived;
-    }
-    private Position creatRandomPosition() {
+
+    public Position creatRandomPosition() {
         return new Position(RANDOM.nextInt(WIDTH - 10), RANDOM.nextInt(HEIGHT - 10));
     }
     private Room creatRandomRoom(int mark) {
@@ -172,10 +175,10 @@ public class WorldGenerator implements Serializable {
     private TETile[][] drawInRoomsAndHallways(
             TETile[][] tiles, List<Room> rooms, List<HallWay> hallWays) {
         for (Room r : rooms) {
-            r.drawRoom(tiles);
+            r.draw(tiles);
         }
         for (HallWay h : hallWays) {
-            h.drawHallWay(tiles);
+            h.draw(tiles);
         }
         return tiles;
     }

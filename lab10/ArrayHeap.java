@@ -241,7 +241,33 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
             return toReturn;
         }
     }
+    @Test
+    public void testToString() {
+        ExtrinsicPQ<String> pq = new ArrayHeap<>();
+        pq.insert("c", 3);
+//        pq.insert("i", 9);
+//        pq.insert("g", 7);
+//        pq.insert("d", 4);
+//        pq.insert("a", 1);
+//        pq.insert("h", 8);
+//        pq.insert("e", 5);
+//        pq.insert("b", 2);
+//        pq.insert("c", 3);
+//        pq.insert("d", 4);
 
+        System.out.println(pq);
+    }
+    private String toStringVertical(int index, String soFar) {
+        if (getNode(index) == null) {
+            return "";
+        } else {
+            String toReturn = getNode(index).toString();
+            int rightChild = rightIndex(index);
+            toReturn += toStringVertical(rightChild, "       " + soFar);
+
+        }
+        return null;
+    }
 
     /**
      * Throws an exception if the index is invalid for sinking or swimming.
@@ -286,7 +312,7 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
     /** Helper function to resize the backing array when necessary. */
     private void resize(int capacity) {
         Node[] temp = new ArrayHeap.Node[capacity];
-        for (int i = 1; i < this.contents.length; i++) {
+        for (int i = 1; i < contents.length; i++) {
             temp[i] = this.contents[i];
         }
         this.contents = temp;

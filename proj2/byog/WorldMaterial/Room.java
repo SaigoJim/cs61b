@@ -5,7 +5,7 @@ import byog.TileEngine.Tileset;
 
 import java.io.Serializable;
 
-public class Room implements Serializable {
+public class Room implements Serializable, Material {
     private static final long serialVersionUID = 17236732674223L;
     Position pos;
     int width;
@@ -119,7 +119,7 @@ public class Room implements Serializable {
         return new Line(new Position(pos.getxPos() + width - 1, pos.getyPos()),
                 new Position(pos.getxPos() + width - 1, pos.getyPos() + height - 1));
     }
-    public void drawRoom(TETile[][] tiles) {
+    private void drawRoom(TETile[][] tiles) {
         for (int rowNum = 0; rowNum < height; rowNum += 1) {
             int startX = pos.getxPos();
             int startY = pos.getyPos() + rowNum;
@@ -140,5 +140,15 @@ public class Room implements Serializable {
         for (int i = 0; i < rowLength; i += 1) {
             tiles[p.getxPos() + i][p.getyPos()] = tile;
         }
+    }
+
+    @Override
+    public void draw(TETile[][] tiles) {
+        drawRoom(tiles);
+    }
+
+    @Override
+    public Position getSpot() {
+        return pos;
     }
 }

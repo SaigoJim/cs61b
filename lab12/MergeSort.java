@@ -35,7 +35,16 @@ public class MergeSort {
     private static <Item extends Comparable> Queue<Queue<Item>>
             makeSingleItemQueues(Queue<Item> items) {
         // Your code here!
-        return null;
+        if (items.isEmpty()) {
+            return new Queue<>();
+        }
+        Queue<Queue<Item>> queueQueue = new Queue<>();
+        for (Item item : items) {
+            Queue<Item> queue = new Queue<>();
+            queue.enqueue(item);
+            queueQueue.enqueue(queue);
+        }
+        return queueQueue;
     }
 
     /**
@@ -54,13 +63,51 @@ public class MergeSort {
     private static <Item extends Comparable> Queue<Item> mergeSortedQueues(
             Queue<Item> q1, Queue<Item> q2) {
         // Your code here!
-        return null;
+        Queue<Item> returnedQueue = new Queue<>();
+        while (!(q1.isEmpty() && q2.isEmpty())) {
+            Item min = getMin(q1, q2);
+            returnedQueue.enqueue(min);
+        }
+        return returnedQueue;
     }
 
     /** Returns a Queue that contains the given items sorted from least to greatest. */
     public static <Item extends Comparable> Queue<Item> mergeSort(
             Queue<Item> items) {
-        // Your code here!
-        return items;
+        // Decompose items to single item queue
+        Queue<Item> itemQueue = new Queue<>();
+        for (Item elem : items) {
+            itemQueue.enqueue(elem);
+        }
+        if (items.size() <= 1) {
+            return itemQueue;
+        }
+        Queue<Item> leftQueue = new Queue<>();
+        Queue<Item> rightQueue = new Queue<>();
+        int size = itemQueue.size();
+        for (Item elem : itemQueue) {
+            if (leftQueue.size() < size / 2) {
+                leftQueue.enqueue(elem);
+            } else {
+                rightQueue.enqueue(elem);
+            }
+        }
+        Queue<Item> sortedLeft = mergeSort(leftQueue);
+        Queue<Item> sortedRight = mergeSort(rightQueue);
+        Queue<Item> returnedQueue = mergeSortedQueues(sortedLeft, sortedRight);
+        return returnedQueue;
+    }
+
+    public static void main(String[] args) {
+        Queue<String> students = new Queue<String>();
+        students.enqueue("Alice");
+        students.enqueue("Vanessa");
+        students.enqueue("Ethan");
+        students.enqueue("Jo");
+        System.out.println(students);
+
+        Queue<String> mergeSortedStudents = mergeSort(students);
+        System.out.println(students);
+        System.out.println(mergeSortedStudents);
     }
 }

@@ -50,7 +50,6 @@ public class MazeAStarPath extends MazeExplorer {
                     if (distTo[neighbor] == Integer.MAX_VALUE) {
                         distTo[neighbor] = distTo[v] + 1;
                         edgeTo[neighbor] = v;
-
                         minPQ.insert(neighbor, distTo[neighbor] + h(neighbor));
                     } else if (distTo[v] + 1 < distTo[neighbor]) {
                         minPQ.changePriority(neighbor, distTo[v] + 1);

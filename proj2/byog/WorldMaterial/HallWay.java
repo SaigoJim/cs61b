@@ -5,7 +5,7 @@ import byog.TileEngine.Tileset;
 
 import java.io.Serializable;
 
-public class HallWay implements Serializable {
+public class HallWay implements Serializable, Material {
     private static final long serialVersionUID = 452132343342342344L;
     Line source, target;
     Position firstPoint, secondPoint, thirdPoint;
@@ -28,13 +28,13 @@ public class HallWay implements Serializable {
         return new Position(third.getxPos(), first.getyPos());
     }
 
-    public void drawHallWay(TETile[][] tiles) {
-        drawThreePoints(tiles, firstPoint, secondPoint, thirdPoint);
+    private void drawHallWay(TETile[][] tiles) {
+        connectThreePoints(tiles, firstPoint, secondPoint, thirdPoint);
     }
-    private void drawThreePoints(
+    private void connectThreePoints(
             TETile[][] tiles, Position first, Position second, Position third) {
-        drawLineSegment(tiles, first, second);
-        drawLineSegment(tiles, second, third);
+        connectTwoPoints(tiles, first, second);
+        connectTwoPoints(tiles, second, third);
         drawHallWayCorner(tiles, second);
         drawHallWayCorner(tiles, first);
         drawHallWayCorner(tiles, third);
@@ -117,7 +117,7 @@ public class HallWay implements Serializable {
         return distanceBetweenMiddle < sourceHalfWidth;
     }
 
-    private void drawLineSegment(TETile[][] tiles, Position s, Position e) {
+    private void connectTwoPoints(TETile[][] tiles, Position s, Position e) {
         if (s == e) {
             return;
         }
@@ -146,6 +146,7 @@ public class HallWay implements Serializable {
             drawCol(tiles, new Position(p.getxPos() + 2, p.getyPos()), length, Tileset.WALL);
         }
     }
+
     private void drawCol(TETile[][] tiles, Position p, int colLength, TETile tile) {
         for (int i = 0; i < colLength; i += 1) {
             if (tiles[p.getxPos()][p.getyPos() + i] != Tileset.FLOOR) {
@@ -168,5 +169,15 @@ public class HallWay implements Serializable {
                 tiles[p.getxPos() + i][p.getyPos()] = tile;
             }*/
         }
+    }
+
+    @Override
+    public void draw(TETile[][] tiles) {
+        drawHallWay(tiles);
+    }
+
+    @Override
+    public Position getSpot() {
+        return firstPoint;
     }
 }

@@ -1,6 +1,9 @@
 package byog.WorldMaterial;
 
+import byog.TileEngine.TETile;
+
 import java.io.Serializable;
+import java.util.Random;
 
 public class Position implements Serializable {
     private static final long serialVersionUID = 874267321223423L;
@@ -26,5 +29,9 @@ public class Position implements Serializable {
             return true;
         }
         return o.getxPos() == this.getxPos() && o.getyPos() == this.getyPos();
+    }
+
+    public static Position createARandomPosition(int width, int height, Random random) {
+        return new Position(random.nextInt(width - 10), random.nextInt(height - 10));
     }
 }

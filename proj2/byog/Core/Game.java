@@ -32,21 +32,16 @@ public class Game {
         gameOver = false;
         playerWin = false;
         String startCommand = mainMenu();
-        if (startCommand.equals("Q") || startCommand.equals("q")) {
-            StdDraw.clear(StdDraw.WHITE);
-            StdDraw.show();
-            return;
-        }
-        ter.initialize(WIDTH, HEIGHT + 1);
         TETile[][] tiles = playWithInputString(startCommand);
-        ter.renderFrame(tiles);
+        ter.initialize(WIDTH, HEIGHT + 1);
         while (!gameOver) {
+            ter.renderFrame(tiles);
             String playerCommand;
             playerCommand = mouseAndKeyBoard(finalWorldFrame);
             tiles = playWithInputString(playerCommand);
             ter.renderFrame(tiles);
             if (playerWin) {
-                StdDraw.pause(5000);
+                StdDraw.pause(2000);
                 showEndMessage();
                 gameOver = true;
             }
@@ -56,8 +51,6 @@ public class Game {
         }
     }
     private void showEndMessage() {
-        StdDraw.clear();
-        StdDraw.clear(Color.black);
         Font bigFont = new Font("Monaco", Font.BOLD, 50);
         StdDraw.setFont(bigFont);
         StdDraw.setPenColor(Color.white);
@@ -91,6 +84,11 @@ public class Game {
         return inputSB.toString();
     }
     private String mainMenu() {
+        showMainMenu();
+        String input = implicitCharsInput();
+        return input;
+    }
+    private void showMainMenu() {
         int width = 40;
         int height = 60;
         int midWidth = width / 2;
@@ -109,12 +107,10 @@ public class Game {
         StdDraw.text(midWidth, midHeight + 20, "CS61B: The Game");
         StdDraw.setFont(smallFont);
         StdDraw.text(midWidth, midHeight + 2, "New Game(N)");
-        StdDraw.text(midWidth, midHeight, "Load Game(N)");
+        StdDraw.text(midWidth, midHeight, "Load Game(L)");
         StdDraw.text(midWidth, midHeight - 2, "Quit Game(Q)");
 
         StdDraw.show();
-        String input = implicitCharsInput();
-        return input;
     }
     private String implicitCharsInput() {
         StringBuilder inputSB = new StringBuilder();
@@ -180,6 +176,8 @@ public class Game {
             return input.substring(inputIndex, inputIndex + 1);
         } else if (inputs[inputIndex] == ':') {
             return input.substring(inputIndex, inputIndex + 2);
+        } else if (inputs[inputIndex] == 'Q' || inputs[inputIndex] == 'q') {
+            return input.substring(inputIndex, inputIndex + 1);
         }
         String command;
         command = collectCommand(inputs, inputIndex);
@@ -217,6 +215,9 @@ public class Game {
             loadPrevWorld();
         } else if (command.equals(":Q") || command.equals(":q")) {
             closeCurWorld();
+        } else if (command.equals("Q") || command.equals("q")) {
+            gameOver = true;
+            return null;
         } else {
             doMovements(commands);
         }
