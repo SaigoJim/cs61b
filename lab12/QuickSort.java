@@ -74,6 +74,8 @@ public class QuickSort {
         Item pivot = getRandomItem(itemQueue);
         Queue<Item> less = new Queue<>(), equal = new Queue<>(), greater = new Queue<>();
         partition(itemQueue, pivot, less, equal, greater);
+        less = quickSort(less);
+        greater = quickSort(greater);
         Queue<Item> returnQueue = catenate(less, equal);
         returnQueue = catenate(returnQueue, greater);
         return returnQueue;
@@ -90,5 +92,13 @@ public class QuickSort {
         Queue<String> quickSortedStudents = quickSort(students);
         System.out.println(students);
         System.out.println(quickSortedStudents);
+        Queue<Integer> queue = new Queue<>();
+        int[] ints = new int[] {0, 1, 5, 4, 5, 2, 8, 6, 6, 5};
+        for (int i : ints) {
+            queue.enqueue(i);
+        }
+        System.out.println(queue);
+        Queue<Integer> quickSortedQueue = quickSort(queue);
+        System.out.println(quickSortedQueue);
     }
 }
