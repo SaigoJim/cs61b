@@ -16,8 +16,16 @@ public class RadixSort {
      * @return String[] the sorted array
      */
     public static String[] sort(String[] asciis) {
-        // TODO: Implement LSD Sort
-        return null;
+        int maxWidth = Integer.MIN_VALUE;
+        for (String ascii : asciis) {
+            maxWidth = maxWidth < ascii.length() ? ascii.length() : maxWidth;
+        }
+        String[] strs = new String[asciis.length];
+        System.arraycopy(asciis, 0, strs, 0, strs.length);
+        for (int i = 0; i < maxWidth; i += 1) {
+            sortHelperLSD(strs, i);
+        }
+        return strs;
     }
 
     /**
@@ -27,10 +35,43 @@ public class RadixSort {
      * @param index The position to sort the Strings on.
      */
     private static void sortHelperLSD(String[] asciis, int index) {
-        // Optional LSD helper method for required LSD radix sort
-        return;
+        // gather all the counts for each value
+        int[] counts = new int[256];
+        for (String ascii : asciis) {
+            int pos = placeOfStringAtIndex(ascii, index);
+            counts[pos] += 1;
+        }
+
+        // A generalized implementation of
+        // counting sort that uses start position calculation
+        int currNum = 0;
+        for (int i = 0; i < counts.length; i += 1) {
+            int temp = counts[i];
+            counts[i] = currNum;
+            currNum += temp;
+        }
+
+        String[] strs = new String[asciis.length];
+        System.arraycopy(asciis, 0, strs, 0, strs.length);
+        for (int i = 0; i < asciis.length; i += 1) {
+            String item = strs[i];
+            int asciiValue = placeOfStringAtIndex(item, index);
+            int place = counts[asciiValue];
+            asciis[place] = item;
+            counts[asciiValue] += 1;
+        }
     }
 
+    private static int placeOfStringAtIndex(String ascii, int index) {
+        if (index > ascii.length() - 1) {
+            return 0;
+        } else {
+            int leastSignificantIndex = ascii.length() - index - 1;
+            char radixChar = ascii.charAt(leastSignificantIndex);
+            int pos = (int) radixChar;
+            return pos;
+        }
+    }
     /**
      * MSD radix sort helper function that recursively calls itself to achieve the sorted array.
      * Destructive method that changes the passed in array, asciis.
