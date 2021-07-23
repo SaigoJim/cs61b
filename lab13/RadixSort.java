@@ -64,7 +64,7 @@ public class RadixSort {
 
     private static int placeOfStringAtIndex(String ascii, int index) {
         if (index > ascii.length() - 1) {
-            return 0;
+            return ascii.charAt(0);
         } else {
             int leastSignificantIndex = ascii.length() - index - 1;
             char radixChar = ascii.charAt(leastSignificantIndex);
