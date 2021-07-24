@@ -26,6 +26,13 @@ public class RadixSortTester {
         assertArrayEquals(asciis, sorted);
     }
     @Test
+    public void testLSD3() {
+        String[] asciis = new String[]{"  ", "      ", "    ", " "};
+        String[] sorted = RadixSort.sort(asciis);
+        Arrays.sort(asciis);
+        assertArrayEquals(asciis, sorted);
+    }
+    @Test
     public void testStringCompareTo() {
         int r = "zzz".compareTo("zsdf");
         String a = "zzz";

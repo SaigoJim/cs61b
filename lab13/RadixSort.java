@@ -49,16 +49,24 @@ public class RadixSort {
             counts[i] = currNum;
             currNum += temp;
         }
-
         String[] strs = new String[asciis.length];
-        System.arraycopy(asciis, 0, strs, 0, strs.length);
         for (int i = 0; i < asciis.length; i += 1) {
-            String item = strs[i];
+            String item = asciis[i];
             int asciiValue = placeOfStringAtIndex(item, index);
             int place = counts[asciiValue];
-            asciis[place] = item;
+            strs[place] = item;
             counts[asciiValue] += 1;
         }
+        System.arraycopy(strs, 0, asciis, 0, strs.length);
+//        String[] strs = new String[asciis.length];
+//        System.arraycopy(asciis, 0, strs, 0, strs.length);
+//        for (int i = 0; i < asciis.length; i += 1) {
+//            String item = strs[i];
+//            int asciiValue = placeOfStringAtIndex(item, index);
+//            int place = counts[asciiValue];
+//            asciis[place] = item;
+//            counts[asciiValue] += 1;
+//        }
     }
 
     private static int placeOfStringAtIndex(String ascii, int index) {
