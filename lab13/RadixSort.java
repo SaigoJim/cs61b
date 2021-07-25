@@ -5,6 +5,38 @@
  *
  */
 public class RadixSort {
+    public static String[] sort(String[] asciis) {
+        int maxWidth = Integer.MIN_VALUE;
+        for (String ascii : asciis) {
+            maxWidth = maxWidth < ascii.length() ? ascii.length() : maxWidth;
+        }
+        String[] stringsArray = new String[asciis.length];
+        System.arraycopy(asciis, 0, stringsArray, 0, stringsArray.length);
+        String[] strs = new String[stringsArray.length];
+        for (int index = maxWidth - 1; index > - 1; index -= 1) {
+            // gather all the counts for each value
+            // compute frequency counts
+            int R = 256;
+            int[] counts = new int[R + 1];
+            for (String string : stringsArray) {
+                int pos = placeOfStringAtIndex(string, index);
+                counts[pos + 1] += 1;
+            }
+            // A generalized implementation of
+            // counting sort that uses start position calculation
+            // compute cumulates
+            for (int i = 0; i < R; i += 1) {
+                counts[i + 1] += counts[i];
+            }
+            // move data
+            for (int i = 0; i < stringsArray.length; i += 1) {
+                strs[counts[placeOfStringAtIndex(stringsArray[i], index)]++] = stringsArray[i];
+            }
+            // copy back
+            System.arraycopy(strs, 0, stringsArray, 0, strs.length);
+        }
+        return stringsArray;
+    }
     /**
      * Does LSD radix sort on the passed in array with the following restrictions:
      * The array can only have ASCII Strings (sequence of 1 byte characters)
@@ -15,7 +47,7 @@ public class RadixSort {
      *
      * @return String[] the sorted array
      */
-    public static String[] sort(String[] asciis) {
+    public static String[] sortX(String[] asciis) {
         int maxWidth = Integer.MIN_VALUE;
         for (String ascii : asciis) {
             maxWidth = maxWidth < ascii.length() ? ascii.length() : maxWidth;
@@ -35,38 +67,30 @@ public class RadixSort {
      */
     private static void sortHelperLSD(String[] asciis, int index) {
         // gather all the counts for each value
-        int[] counts = new int[256];
+        // compute frequency counts
+        int R = 256;
+        int[] counts = new int[R + 1];
         for (String ascii : asciis) {
             int pos = placeOfStringAtIndex(ascii, index);
-            counts[pos] += 1;
+            counts[pos + 1] += 1;
         }
 
         // A generalized implementation of
         // counting sort that uses start position calculation
-        int currNum = 0;
-        for (int i = 0; i < counts.length; i += 1) {
-            int temp = counts[i];
-            counts[i] = currNum;
-            currNum += temp;
+        // compute cumulates
+        for (int i = 0; i < R; i += 1) {
+            counts[i + 1] += counts[i];
         }
+        // move data
         String[] strs = new String[asciis.length];
         for (int i = 0; i < asciis.length; i += 1) {
-            String item = asciis[i];
-            int asciiValue = placeOfStringAtIndex(item, index);
-            int place = counts[asciiValue];
-            strs[place] = item;
-            counts[asciiValue] += 1;
+            strs[counts[placeOfStringAtIndex(asciis[i], index)]++] = asciis[i];
         }
-        System.arraycopy(strs, 0, asciis, 0, strs.length);
-//        String[] strs = new String[asciis.length];
-//        System.arraycopy(asciis, 0, strs, 0, strs.length);
-//        for (int i = 0; i < asciis.length; i += 1) {
-//            String item = strs[i];
-//            int asciiValue = placeOfStringAtIndex(item, index);
-//            int place = counts[asciiValue];
-//            asciis[place] = item;
-//            counts[asciiValue] += 1;
+        // copy back
+//        for (int i = 0; i < asciis.length; i++) {
+//            asciis[i] = strs[i];
 //        }
+        System.arraycopy(strs, 0, asciis, 0, strs.length);
     }
 
     private static int placeOfStringAtIndex(String ascii, int index) {
